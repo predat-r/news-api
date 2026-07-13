@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-seed-news-table
+      author: codex
+      changes:
+        - insert:
+            tableName: news
+            columns:
+              - column:
+                  name: title
+                  value: "Spring Boot News Service Launched"
+              - column:
+                  name: details
+                  value: "The news service now supports CRUD operations with pagination."
+              - column:
+                  name: reported_by
+                  value: "System"
+              - column:
+                  name: reported_at
+                  valueDate: "2026-07-13T09:00:00"
+              - column:
+                  name: updated_at
+                  valueDate: "2026-07-13T09:00:00"
+        - insert:
+            tableName: news
+            columns:
+              - column:
+                  name: title
+                  value: "Liquibase Migrations Enabled"
+              - column:
+                  name: details
+                  value: "Database schema and seed data are managed through Liquibase changelogs."
+              - column:
+                  name: reported_by
+                  value: "System"
+              - column:
+                  name: reported_at
+                  valueDate: "2026-07-13T10:00:00"
+              - column:
+                  name: updated_at
+                  valueDate: "2026-07-13T10:00:00"
