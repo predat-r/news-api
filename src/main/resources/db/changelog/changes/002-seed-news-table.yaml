@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 002-seed-news-table
-      author: codex
+      author: haris.naeem
       changes:
         - insert:
             tableName: news

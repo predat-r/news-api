@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 001-create-news-table
-      author: codex
+      author: haris.naeem
       changes:
         - createTable:
             tableName: news
