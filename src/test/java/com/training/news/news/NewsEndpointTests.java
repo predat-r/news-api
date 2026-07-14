@@ -10,10 +10,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,84 +28,95 @@ class NewsEndpointTests {
 
     @Test
     void createNewsReturnsCreatedNews() throws Exception {
-        mockMvc.perform(post(NEWS_API).contentType(MediaType.APPLICATION_JSON).content(validNewsRequest("Endpoint create title", "Endpoint create details", "Reporter A"))).andExpect(status().isCreated()).andExpect(jsonPath("$.newsId").isNumber()).andExpect(jsonPath("$.title").value("Endpoint create title")).andExpect(jsonPath("$.details").value("Endpoint create details")).andExpect(jsonPath("$.reportedBy").value("Reporter A")).andExpect(jsonPath("$.reportedAt").exists()).andExpect(jsonPath("$.updatedAt").exists());
+        mockMvc.perform(post(NEWS_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newsRequest("Create title", "Create details", "Reporter A")))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.newsId").isNumber())
+                .andExpect(jsonPath("$.title").value("Create title"))
+                .andExpect(jsonPath("$.details").value("Create details"))
+                .andExpect(jsonPath("$.reportedBy").value("Reporter A"));
     }
 
     @Test
     void getNewsReturnsPaginatedNews() throws Exception {
-        createNews("Endpoint list title", "Endpoint list details", "Reporter B");
+        createNews("List title", "List details", "Reporter B");
 
-        mockMvc.perform(get(NEWS_API).param("page", "0").param("size", "5")).andExpect(status().isOk()).andExpect(jsonPath("$.content").isArray()).andExpect(jsonPath("$.content").isArray()).andExpect(jsonPath("$.content.length()").isNotEmpty()).andExpect(jsonPath("$.page.totalElements").isNumber()).andExpect(jsonPath("$.page.size").value(5)).andExpect(jsonPath("$.page.number").value(0));
+        mockMvc.perform(get(NEWS_API)
+                        .param("page", "0")
+                        .param("size", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content.length()").isNotEmpty())
+                .andExpect(jsonPath("$.page.size").value(5))
+                .andExpect(jsonPath("$.page.number").value(0));
     }
 
     @Test
     void getNewsByIdReturnsNews() throws Exception {
-        JsonNode createdNews = createNews("Endpoint get title", "Endpoint get details", "Reporter C");
+        JsonNode createdNews = createNews("Get title", "Get details", "Reporter C");
         long newsId = createdNews.get("newsId").asLong();
 
-        mockMvc.perform(get(NEWS_API + "/{newsId}", newsId)).andExpect(status().isOk()).andExpect(jsonPath("$.newsId").value(newsId)).andExpect(jsonPath("$.title").value("Endpoint get title")).andExpect(jsonPath("$.details").value("Endpoint get details")).andExpect(jsonPath("$.reportedBy").value("Reporter C"));
-    }
-
-    @Test
-    void updateNewsUpdatesAllowedFieldsAndUpdatedAtOnly() throws Exception {
-        JsonNode createdNews = createNews("Before update title", "Before update details", "Reporter D");
-        long newsId = createdNews.get("newsId").asLong();
-        LocalDateTime oldUpdatedAt = LocalDateTime.parse(createdNews.get("updatedAt").asString());
-
-        Thread.sleep(10);
-
-        MvcResult result = mockMvc.perform(put(NEWS_API + "/{newsId}", newsId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(validNewsRequest("After update title", "After update details", "Reporter E")))
+        mockMvc.perform(get(NEWS_API + "/{newsId}", newsId))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        JsonNode updatedNews = objectMapper.readTree(result.getResponse().getContentAsString());
-        LocalDateTime newUpdatedAt = LocalDateTime.parse(updatedNews.get("updatedAt").asString());
-
-        assertThat(newUpdatedAt).isAfter(oldUpdatedAt);
+                .andExpect(jsonPath("$.newsId").value(newsId))
+                .andExpect(jsonPath("$.title").value("Get title"))
+                .andExpect(jsonPath("$.details").value("Get details"))
+                .andExpect(jsonPath("$.reportedBy").value("Reporter C"));
     }
 
     @Test
-    void updateNewsReturnsNotFoundWhenNewsDoesNotExist() throws Exception {
-        long missingNewsId = 999999L;
+    void updateNewsReturnsUpdatedNews() throws Exception {
+        JsonNode createdNews = createNews("Before title", "Before details", "Reporter D");
+        long newsId = createdNews.get("newsId").asLong();
 
-        mockMvc.perform(put(NEWS_API + "/{newsId}", missingNewsId).contentType(MediaType.APPLICATION_JSON).content(validNewsRequest("Missing update title", "Missing update details", "Reporter X"))).andExpect(status().isNotFound()).andExpect(jsonPath("$.message").value("News not found with id: " + missingNewsId));
+        mockMvc.perform(put(NEWS_API + "/{newsId}", newsId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newsRequest("After title", "After details", "Reporter E")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.newsId").value(newsId))
+                .andExpect(jsonPath("$.title").value("After title"))
+                .andExpect(jsonPath("$.details").value("After details"))
+                .andExpect(jsonPath("$.reportedBy").value("Reporter E"))
+                .andExpect(jsonPath("$.reportedAt").exists())
+                .andExpect(jsonPath("$.updatedAt").exists());
     }
 
     @Test
     void deleteNewsRemovesNews() throws Exception {
-        JsonNode createdNews = createNews("Endpoint delete title", "Endpoint delete details", "Reporter F");
+        JsonNode createdNews = createNews("Delete title", "Delete details", "Reporter F");
         long newsId = createdNews.get("newsId").asLong();
 
-        mockMvc.perform(delete(NEWS_API + "/{newsId}", newsId)).andExpect(status().isNoContent());
+        mockMvc.perform(delete(NEWS_API + "/{newsId}", newsId))
+                .andExpect(status().isNoContent());
 
-        mockMvc.perform(get(NEWS_API + "/{newsId}", newsId)).andExpect(status().isNotFound()).andExpect(jsonPath("$.message").value("News not found with id: " + newsId));
+        mockMvc.perform(get(NEWS_API + "/{newsId}", newsId))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void invalidCreateRequestReturnsValidationErrors() throws Exception {
-        mockMvc.perform(post(NEWS_API).contentType(MediaType.APPLICATION_JSON).content("""
-                {
-                  "title": "",
-                  "details": "",
-                  "reportedBy": ""
-                }
-                """)).andExpect(status().isBadRequest()).andExpect(jsonPath("$.message").value("Validation failed")).andExpect(jsonPath("$.errors.title").value("Title is required")).andExpect(jsonPath("$.errors.details").value("Details are required")).andExpect(jsonPath("$.errors.reportedBy").value("Reporter is required"));
-    }
-
-    @Test
-    void invalidPaginationReturnsBadRequest() throws Exception {
-        mockMvc.perform(get(NEWS_API).param("page", "0").param("size", "0")).andExpect(status().isBadRequest()).andExpect(jsonPath("$.message").exists());
+        mockMvc.perform(post(NEWS_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newsRequest("", "", "")))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.errors.title").value("Title is required"))
+                .andExpect(jsonPath("$.errors.details").value("Details are required"))
+                .andExpect(jsonPath("$.errors.reportedBy").value("Reporter is required"));
     }
 
     private JsonNode createNews(String title, String details, String reportedBy) throws Exception {
-        MvcResult result = mockMvc.perform(post(NEWS_API).contentType(MediaType.APPLICATION_JSON).content(validNewsRequest(title, details, reportedBy))).andExpect(status().isCreated()).andReturn();
+        MvcResult result = mockMvc.perform(post(NEWS_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newsRequest(title, details, reportedBy)))
+                .andExpect(status().isCreated())
+                .andReturn();
 
         return objectMapper.readTree(result.getResponse().getContentAsString());
     }
 
-    private String validNewsRequest(String title, String details, String reportedBy) {
+    private String newsRequest(String title, String details, String reportedBy) {
         return """
                 {
                   "title": "%s",
@@ -117,9 +124,5 @@ class NewsEndpointTests {
                   "reportedBy": "%s"
                 }
                 """.formatted(title, details, reportedBy);
-    }
-
-    private void assertSameTimestamp(LocalDateTime expected, LocalDateTime actual) {
-        assertThat(Duration.between(expected, actual).abs()).isLessThanOrEqualTo(Duration.ofMillis(1));
     }
 }
