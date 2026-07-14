@@ -21,7 +21,4 @@ public class NewsRequest {
 	@Size(max = 5000, message = "Details must not exceed 5000 characters")
 	private String details;
 
-	@NotBlank(message = "Reporter is required")
-	@Size(max = 100, message = "Reporter must not exceed 100 characters")
-	private String reportedBy;
 }

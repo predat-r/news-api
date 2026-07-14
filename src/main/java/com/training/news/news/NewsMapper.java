@@ -12,7 +12,6 @@ public class NewsMapper {
 		return News.builder()
 				.title(request.getTitle())
 				.details(request.getDetails())
-				.reportedBy(request.getReportedBy())
 				.reportedAt(now)
 				.updatedAt(now)
 				.build();

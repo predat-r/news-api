@@ -4,10 +4,13 @@ import com.training.news.exception.NewsNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -21,8 +24,11 @@ public class NewsService {
         this.newsMapper = newsMapper;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','EDITOR','REPORTER')")
     public NewsResponse createNews(NewsRequest request) {
+        String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         News news = newsMapper.toEntity(request);
+        news.setReportedBy(username);
         return newsMapper.toResponse(newsRepository.save(news));
     }
 
@@ -37,12 +43,16 @@ public class NewsService {
         return newsMapper.toResponse(findNews(newsId));
     }
 
+    @PreAuthorize("""
+            hasAnyRole('ADMIN', 'EDITOR')
+            or (hasRole('REPORTER')
+            and @newsAuthorization.isOwner(#newsId, authentication.name))
+            """)
     public NewsResponse updateNews(Long newsId, NewsRequest request) {
         News existingNews = findNews(newsId);
 
         existingNews.setTitle(request.getTitle());
         existingNews.setDetails(request.getDetails());
-        existingNews.setReportedBy(request.getReportedBy());
         existingNews.setUpdatedAt(LocalDateTime.now());
 
         News updatedNews = newsRepository.save(existingNews);
@@ -50,6 +60,11 @@ public class NewsService {
         return newsMapper.toResponse(updatedNews);
     }
 
+    @PreAuthorize("""
+            hasAnyRole('ADMIN', 'EDITOR')
+            or (hasRole('REPORTER')
+            and @newsAuthorization.isOwner(#newsId, authentication.name))
+            """)
     public void deleteNews(Long newsId) {
         News news = findNews(newsId);
         newsRepository.delete(news);

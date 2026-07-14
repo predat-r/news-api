@@ -14,7 +14,7 @@ databaseChangeLog:
                   value: "The news service now supports CRUD operations with pagination."
               - column:
                   name: reported_by
-                  value: "System"
+                  value: "Editor"
               - column:
                   name: reported_at
                   valueDate: "2026-07-13T09:00:00"
@@ -32,7 +32,7 @@ databaseChangeLog:
                   value: "Database schema and seed data are managed through Liquibase changelogs."
               - column:
                   name: reported_by
-                  value: "System"
+                  value: "Editor"
               - column:
                   name: reported_at
                   valueDate: "2026-07-13T10:00:00"
