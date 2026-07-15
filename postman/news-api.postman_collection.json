@@ -1,0 +1,506 @@
+{
+  "info": {
+    "_postman_id": "d87f4d96-78d4-4d62-972a-1d4645b0418f",
+    "name": "News API",
+    "description": "Session-based CRUD flow for the News API. Run the requests in order: fetch a login CSRF token, log in, refresh the rotated token, then execute the CRUD requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "username",
+      "value": "editor"
+    },
+    {
+      "key": "password",
+      "value": "editor123",
+      "type": "secret"
+    },
+    {
+      "key": "csrfToken",
+      "value": ""
+    },
+    {
+      "key": "sessionId",
+      "value": ""
+    },
+    {
+      "key": "newsId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "1 - Get Login CSRF Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Loads Spring Security's generated login page and saves its hidden CSRF token. Postman retains the accompanying session cookie automatically."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Login page is available', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const match = pm.response.text().match(/name=[\"']_csrf[\"'][^>]*value=[\"']([^\"']+)[\"']/i);",
+                  "pm.test('CSRF token is present', function () {",
+                  "    pm.expect(match, 'hidden _csrf input').to.not.equal(null);",
+                  "});",
+                  "",
+                  "if (match) {",
+                  "    pm.collectionVariables.set('csrfToken', match[1]);",
+                  "}",
+                  "",
+                  "const sessionMatch = (pm.response.headers.get('Set-Cookie') || '').match(/JSESSIONID=([^;]+)/);",
+                  "pm.test('Pre-login session cookie is present', function () {",
+                  "    pm.expect(sessionMatch, 'JSESSIONID cookie').to.not.equal(null);",
+                  "});",
+                  "",
+                  "if (sessionMatch) {",
+                  "    pm.collectionVariables.set('sessionId', sessionMatch[1]);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "2 - Login",
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Cookie",
+                "value": "JSESSIONID={{sessionId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{username}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Submits form login credentials and the pre-login CSRF token. A successful response stores the authenticated JSESSIONID in Postman's cookie jar."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Login redirects after authentication', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([302, 303]);",
+                  "});",
+                  "",
+                  "pm.test('Login did not redirect to the error page', function () {",
+                  "    pm.expect(pm.response.headers.get('Location') || '').not.to.include('error');",
+                  "});",
+                  "",
+                  "const sessionMatch = (pm.response.headers.get('Set-Cookie') || '').match(/JSESSIONID=([^;]+)/);",
+                  "if (sessionMatch) {",
+                  "    pm.collectionVariables.set('sessionId', sessionMatch[1]);",
+                  "}",
+                  "",
+                  "pm.test('Authenticated session is available', function () {",
+                  "    pm.expect(pm.collectionVariables.get('sessionId')).to.be.a('string').and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "3 - Refresh CSRF Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "JSESSIONID={{sessionId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Fetches the new CSRF token generated after authentication. Spring rotates the previous token when login succeeds."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Login page is available after authentication', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const match = pm.response.text().match(/name=[\"']_csrf[\"'][^>]*value=[\"']([^\"']+)[\"']/i);",
+                  "pm.test('Refreshed CSRF token is present', function () {",
+                  "    pm.expect(match, 'hidden _csrf input').to.not.equal(null);",
+                  "});",
+                  "",
+                  "if (match) {",
+                  "    pm.collectionVariables.set('csrfToken', match[1]);",
+                  "}",
+                  "",
+                  "const sessionMatch = (pm.response.headers.get('Set-Cookie') || '').match(/JSESSIONID=([^;]+)/);",
+                  "if (sessionMatch) {",
+                  "    pm.collectionVariables.set('sessionId', sessionMatch[1]);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "News CRUD",
+      "item": [
+        {
+          "name": "List News",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/news?page=0&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "news"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('News page is returned', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Get News by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/news/{{newsId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "news",
+                "{{newsId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('News item is returned', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Create News",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-TOKEN",
+                "value": "{{csrfToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "JSESSIONID={{sessionId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Postman news\",\n  \"details\": \"Created through the Postman collection\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/news",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "news"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('News is created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "    const body = pm.response.json();",
+                  "    pm.collectionVariables.set('newsId', String(body.newsId));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Update News",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-TOKEN",
+                "value": "{{csrfToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "JSESSIONID={{sessionId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Postman news\",\n  \"details\": \"Updated through the Postman collection\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/news/{{newsId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "news",
+                "{{newsId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('News is updated', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Delete News",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-CSRF-TOKEN",
+                "value": "{{csrfToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "JSESSIONID={{sessionId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/news/{{newsId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "news",
+                "{{newsId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('News is deleted', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Logout",
+      "protocolProfileBehavior": {
+        "followRedirects": false
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-CSRF-TOKEN",
+            "value": "{{csrfToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Cookie",
+            "value": "JSESSIONID={{sessionId}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "logout"
+          ]
+        },
+        "description": "Invalidates the authenticated session. Run this after the CRUD requests."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Logout redirects to the login page', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([302, 303]);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}
