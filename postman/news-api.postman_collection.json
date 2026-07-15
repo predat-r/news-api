@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "d87f4d96-78d4-4d62-972a-1d4645b0418f",
     "name": "News API",
-    "description": "Session-based CRUD flow for the News API. Run the requests in order: fetch a login CSRF token, log in, refresh the rotated token, then execute the CRUD requests.",
+    "description": "Session-based CRUD flow using Spring Security 7 SPA CSRF protection. Run Login first, followed by the CRUD requests.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -24,10 +24,6 @@
       "value": ""
     },
     {
-      "key": "sessionId",
-      "value": ""
-    },
-    {
       "key": "newsId",
       "value": "1"
     }
@@ -37,56 +33,7 @@
       "name": "Authentication",
       "item": [
         {
-          "name": "1 - Get Login CSRF Token",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "login"
-              ]
-            },
-            "description": "Loads Spring Security's generated login page and saves its hidden CSRF token. Postman retains the accompanying session cookie automatically."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Login page is available', function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "const match = pm.response.text().match(/name=[\"']_csrf[\"'][^>]*value=[\"']([^\"']+)[\"']/i);",
-                  "pm.test('CSRF token is present', function () {",
-                  "    pm.expect(match, 'hidden _csrf input').to.not.equal(null);",
-                  "});",
-                  "",
-                  "if (match) {",
-                  "    pm.collectionVariables.set('csrfToken', match[1]);",
-                  "}",
-                  "",
-                  "const sessionMatch = (pm.response.headers.get('Set-Cookie') || '').match(/JSESSIONID=([^;]+)/);",
-                  "pm.test('Pre-login session cookie is present', function () {",
-                  "    pm.expect(sessionMatch, 'JSESSIONID cookie').to.not.equal(null);",
-                  "});",
-                  "",
-                  "if (sessionMatch) {",
-                  "    pm.collectionVariables.set('sessionId', sessionMatch[1]);",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "response": []
-        },
-        {
-          "name": "2 - Login",
+          "name": "Login",
           "protocolProfileBehavior": {
             "followRedirects": false
           },
@@ -96,11 +43,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/x-www-form-urlencoded"
-              },
-              {
-                "key": "Cookie",
-                "value": "JSESSIONID={{sessionId}}",
-                "type": "text"
               }
             ],
             "body": {
@@ -115,11 +57,6 @@
                   "key": "password",
                   "value": "{{password}}",
                   "type": "text"
-                },
-                {
-                  "key": "_csrf",
-                  "value": "{{csrfToken}}",
-                  "type": "text"
                 }
               ]
             },
@@ -132,9 +69,44 @@
                 "login"
               ]
             },
-            "description": "Submits form login credentials and the pre-login CSRF token. A successful response stores the authenticated JSESSIONID in Postman's cookie jar."
+            "description": "The pre-request script obtains the login CSRF token. After authentication, the response script captures the new XSRF-TOKEN for protected CRUD requests."
           },
           "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.collectionVariables.get('baseUrl') + '/login',",
+                  "    method: 'GET',",
+                  "    header: { Cookie: 'XSRF-TOKEN=' }",
+                  "}, function (error, response) {",
+                  "    if (error) {",
+                  "        throw error;",
+                  "    }",
+                  "",
+                  "    const setCookieHeaders = response.headers.all()",
+                  "        .filter(header => String(header.key || header.name).toLowerCase() === 'set-cookie')",
+                  "        .map(header => header.value);",
+                  "    const directHeader = response.headers.get('Set-Cookie');",
+                  "    if (directHeader) {",
+                  "        setCookieHeaders.push(directHeader);",
+                  "    }",
+                  "    const xsrfMatch = setCookieHeaders.join('\\n').match(/XSRF-TOKEN=([^;]+)/);",
+                  "",
+                  "    if (!xsrfMatch) {",
+                  "        throw new Error('Login page did not return an XSRF-TOKEN cookie');",
+                  "    }",
+                  "",
+                  "    const rawToken = xsrfMatch[1];",
+                  "    const token = decodeURIComponent(rawToken);",
+                  "    pm.request.headers.upsert({ key: 'X-XSRF-TOKEN', value: token });",
+                  "    pm.request.headers.upsert({ key: 'Cookie', value: 'XSRF-TOKEN=' + rawToken });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
             {
               "listen": "test",
               "script": {
@@ -143,18 +115,26 @@
                   "    pm.expect(pm.response.code).to.be.oneOf([302, 303]);",
                   "});",
                   "",
-                  "pm.test('Login did not redirect to the error page', function () {",
-                  "    pm.expect(pm.response.headers.get('Location') || '').not.to.include('error');",
+                  "const setCookies = pm.response.headers.all()",
+                  "    .filter(header => String(header.key || header.name).toLowerCase() === 'set-cookie')",
+                  "    .map(header => header.value);",
+                  "const directSetCookie = pm.response.headers.get('Set-Cookie');",
+                  "if (directSetCookie) {",
+                  "    setCookies.push(directSetCookie);",
+                  "}",
+                  "const xsrfTokens = setCookies",
+                  "    .map(value => value.match(/XSRF-TOKEN=([^;]*)/))",
+                  "    .filter(match => match && match[1])",
+                  "    .map(match => decodeURIComponent(match[1]));",
+                  "const csrfToken = xsrfTokens.at(-1);",
+                  "",
+                  "pm.test('Post-login XSRF-TOKEN is present', function () {",
+                  "    pm.expect(csrfToken, 'XSRF-TOKEN from Set-Cookie').to.be.a('string').and.not.empty;",
                   "});",
                   "",
-                  "const sessionMatch = (pm.response.headers.get('Set-Cookie') || '').match(/JSESSIONID=([^;]+)/);",
-                  "if (sessionMatch) {",
-                  "    pm.collectionVariables.set('sessionId', sessionMatch[1]);",
-                  "}",
-                  "",
-                  "pm.test('Authenticated session is available', function () {",
-                  "    pm.expect(pm.collectionVariables.get('sessionId')).to.be.a('string').and.not.empty;",
-                  "});"
+                  "if (csrfToken) {",
+                  "    pm.collectionVariables.set('csrfToken', csrfToken);",
+                  "}"
                 ],
                 "type": "text/javascript"
               }
@@ -163,49 +143,38 @@
           "response": []
         },
         {
-          "name": "3 - Refresh CSRF Token",
+          "name": "Logout",
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [
               {
-                "key": "Cookie",
-                "value": "JSESSIONID={{sessionId}}",
+                "key": "X-XSRF-TOKEN",
+                "value": "{{csrfToken}}",
                 "type": "text"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/login",
+              "raw": "{{baseUrl}}/logout",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "login"
+                "logout"
               ]
             },
-            "description": "Fetches the new CSRF token generated after authentication. Spring rotates the previous token when login succeeds."
+            "description": "Invalidates the authenticated session. Run this after the CRUD requests."
           },
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Login page is available after authentication', function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "const match = pm.response.text().match(/name=[\"']_csrf[\"'][^>]*value=[\"']([^\"']+)[\"']/i);",
-                  "pm.test('Refreshed CSRF token is present', function () {",
-                  "    pm.expect(match, 'hidden _csrf input').to.not.equal(null);",
-                  "});",
-                  "",
-                  "if (match) {",
-                  "    pm.collectionVariables.set('csrfToken', match[1]);",
-                  "}",
-                  "",
-                  "const sessionMatch = (pm.response.headers.get('Set-Cookie') || '').match(/JSESSIONID=([^;]+)/);",
-                  "if (sessionMatch) {",
-                  "    pm.collectionVariables.set('sessionId', sessionMatch[1]);",
-                  "}"
+                  "pm.test('Logout redirects to the login page', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([302, 303]);",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -303,13 +272,8 @@
                 "value": "application/json"
               },
               {
-                "key": "X-CSRF-TOKEN",
+                "key": "X-XSRF-TOKEN",
                 "value": "{{csrfToken}}",
-                "type": "text"
-              },
-              {
-                "key": "Cookie",
-                "value": "JSESSIONID={{sessionId}}",
                 "type": "text"
               }
             ],
@@ -364,13 +328,8 @@
                 "value": "application/json"
               },
               {
-                "key": "X-CSRF-TOKEN",
+                "key": "X-XSRF-TOKEN",
                 "value": "{{csrfToken}}",
-                "type": "text"
-              },
-              {
-                "key": "Cookie",
-                "value": "JSESSIONID={{sessionId}}",
                 "type": "text"
               }
             ],
@@ -417,13 +376,8 @@
             "method": "DELETE",
             "header": [
               {
-                "key": "X-CSRF-TOKEN",
+                "key": "X-XSRF-TOKEN",
                 "value": "{{csrfToken}}",
-                "type": "text"
-              },
-              {
-                "key": "Cookie",
-                "value": "JSESSIONID={{sessionId}}",
                 "type": "text"
               }
             ],
@@ -456,51 +410,6 @@
           "response": []
         }
       ]
-    },
-    {
-      "name": "Logout",
-      "protocolProfileBehavior": {
-        "followRedirects": false
-      },
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "X-CSRF-TOKEN",
-            "value": "{{csrfToken}}",
-            "type": "text"
-          },
-          {
-            "key": "Cookie",
-            "value": "JSESSIONID={{sessionId}}",
-            "type": "text"
-          }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/logout",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "logout"
-          ]
-        },
-        "description": "Invalidates the authenticated session. Run this after the CRUD requests."
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('Logout redirects to the login page', function () {",
-              "    pm.expect(pm.response.code).to.be.oneOf([302, 303]);",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "response": []
     }
   ]
 }
