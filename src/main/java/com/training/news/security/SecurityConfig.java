@@ -1,8 +1,7 @@
 package com.training.news.security;
 
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,11 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@SecurityScheme(
-        name = "basicAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "basic"
-)
 public class SecurityConfig {
 
     @Bean
@@ -35,12 +29,11 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         // TODO: Replace HTTP Basic authentication with form-based login.
-        // TODO: Use stateful session management for browser-based authentication.
         // TODO: Enable and configure CSRF protection for state-changing requests.
         http
                 .csrf((csrf) -> csrf.disable())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
