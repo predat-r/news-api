@@ -31,7 +31,7 @@ public class SecurityConfig {
 
         // TODO: Enable and configure CSRF protection for state-changing requests.
         http
-                .csrf((csrf) -> csrf.disable())
+                .csrf(Customizer.withDefaults())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
