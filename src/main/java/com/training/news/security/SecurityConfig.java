@@ -29,7 +29,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 
-        // TODO: Enable and configure CSRF protection for state-changing requests.
+
         http
                 .csrf(Customizer.withDefaults())
                 .sessionManagement(session -> session
