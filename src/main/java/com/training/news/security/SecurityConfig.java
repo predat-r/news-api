@@ -10,14 +10,9 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -35,19 +30,15 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails admin = User.withUsername("admin").password(passwordEncoder.encode("admin123")).roles("ADMIN").build();
-        UserDetails editor = User.withUsername("editor").password(passwordEncoder.encode("editor123")).roles("EDITOR").build();
-        UserDetails reporter1 = User.withUsername("reporter1").password(passwordEncoder.encode("reporter123")).roles("REPORTER").build();
-        UserDetails reporter2 = User.withUsername("reporter2").password(passwordEncoder.encode("reporter123")).roles("REPORTER").build();
-        return new InMemoryUserDetailsManager(admin, editor, reporter1, reporter2);
-    }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        // TODO: Replace HTTP Basic authentication with form-based login.
+        // TODO: Use stateful session management for browser-based authentication.
+        // TODO: Enable and configure CSRF protection for state-changing requests.
         http
-                .csrf((csrf)->csrf.disable())
+                .csrf((csrf) -> csrf.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

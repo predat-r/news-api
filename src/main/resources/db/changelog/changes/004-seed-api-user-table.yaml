@@ -1,0 +1,77 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-seed-api-user-table
+      author: haris.naeem
+      changes:
+        - insert:
+            tableName: api_user
+            columns:
+              - column:
+                  name: username
+                  value: "editor"
+              - column:
+                  name: password
+                  value: '$2a$12$4/rbI.sFFYMpjZEavycNB.HgZ9arqqGsi5FaS2KdJzpWk9dSsJ/JC'
+              - column:
+                  name: role
+                  value: "EDITOR"
+              - column:
+                  name: created_at
+                  valueDate: "2026-07-13T09:00:00"
+              - column:
+                  name: updated_at
+                  valueDate: "2026-07-13T09:00:00"
+        - insert:
+            tableName: api_user
+            columns:
+              - column:
+                  name: username
+                  value: "admin"
+              - column:
+                  name: password
+                  value: '$2a$12$AcX5Paek9FtGZQ8/WC8Wc.dpl8INmtOC4ly8daoP1q1tJ4.p1fACW'
+              - column:
+                  name: role
+                  value: "ADMIN"
+              - column:
+                  name: created_at
+                  valueDate: "2026-07-13T09:00:00"
+              - column:
+                  name: updated_at
+                  valueDate: "2026-07-13T09:00:00"
+        - insert:
+            tableName: api_user
+            columns:
+              - column:
+                  name: username
+                  value: "reporter1"
+              - column:
+                  name: password
+                  value: '$2a$12$fWTm4rrE.CJs8WjL.UxuuO.lvefmfcWmA1JaLGHpTQMhFWhmCZBHO'
+              - column:
+                  name: role
+                  value: "REPORTER"
+              - column:
+                  name: created_at
+                  valueDate: "2026-07-13T09:00:00"
+              - column:
+                  name: updated_at
+                  valueDate: "2026-07-13T09:00:00"
+        - insert:
+            tableName: api_user
+            columns:
+              - column:
+                  name: username
+                  value: "reporter2"
+              - column:
+                  name: password
+                  value: '$2a$12$9DU6WOXYJX9p23jjAoupquqOpzFept/Jl3pWK5MP0zeVtNxOMirAe'
+              - column:
+                  name: role
+                  value: "REPORTER"
+              - column:
+                  name: created_at
+                  valueDate: "2026-07-13T09:00:00"
+              - column:
+                  name: updated_at
+                  valueDate: "2026-07-13T09:00:00"

@@ -24,6 +24,7 @@ public class NewsService {
         this.newsMapper = newsMapper;
     }
 
+
     @PreAuthorize("hasAnyRole('ADMIN','EDITOR','REPORTER')")
     public NewsResponse createNews(NewsRequest request) {
         String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
