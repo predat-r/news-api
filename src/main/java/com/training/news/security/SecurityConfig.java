@@ -28,7 +28,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        // TODO: Replace HTTP Basic authentication with form-based login.
+
         // TODO: Enable and configure CSRF protection for state-changing requests.
         http
                 .csrf((csrf) -> csrf.disable())
@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest()
                         .authenticated())
-                .httpBasic(Customizer.withDefaults());
+                .formLogin(Customizer.withDefaults());
         return http.build();
     }
 
