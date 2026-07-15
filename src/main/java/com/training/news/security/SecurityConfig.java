@@ -39,14 +39,15 @@ public class SecurityConfig {
     UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails admin = User.withUsername("admin").password(passwordEncoder.encode("admin123")).roles("ADMIN").build();
         UserDetails editor = User.withUsername("editor").password(passwordEncoder.encode("editor123")).roles("EDITOR").build();
-        UserDetails reporter = User.withUsername("reporter").password(passwordEncoder.encode("reporter123")).roles("REPORTER").build();
-        return new InMemoryUserDetailsManager(admin, editor, reporter);
+        UserDetails reporter1 = User.withUsername("reporter1").password(passwordEncoder.encode("reporter123")).roles("REPORTER").build();
+        UserDetails reporter2 = User.withUsername("reporter2").password(passwordEncoder.encode("reporter123")).roles("REPORTER").build();
+        return new InMemoryUserDetailsManager(admin, editor, reporter1, reporter2);
     }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf((csrf)->csrf.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
