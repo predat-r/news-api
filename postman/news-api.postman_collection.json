@@ -20,10 +20,6 @@
       "type": "secret"
     },
     {
-      "key": "csrfToken",
-      "value": ""
-    },
-    {
       "key": "accessToken",
       "value": "",
       "type": "secret"
@@ -74,7 +70,7 @@
                 "login"
               ]
             },
-            "description": "Submits form credentials without an XSRF header or cookie. A successful response returns the opaque bearer token as JSON."
+            "description": "Submits form credentials. A successful response returns the opaque bearer token as JSON."
           },
           "event": [
             {
@@ -91,27 +87,6 @@
                   "",
                   "if (pm.response.code === 200) {",
                   "    pm.collectionVariables.set('accessToken', pm.response.json().accessToken);",
-                  "}",
-                  "",
-                  "const setCookies = pm.response.headers.all()",
-                  "    .filter(header => String(header.key || header.name).toLowerCase() === 'set-cookie')",
-                  "    .map(header => header.value);",
-                  "const directSetCookie = pm.response.headers.get('Set-Cookie');",
-                  "if (directSetCookie) {",
-                  "    setCookies.push(directSetCookie);",
-                  "}",
-                  "const xsrfTokens = setCookies",
-                  "    .map(value => value.match(/XSRF-TOKEN=([^;]*)/))",
-                  "    .filter(match => match && match[1])",
-                  "    .map(match => decodeURIComponent(match[1]));",
-                  "const csrfToken = xsrfTokens.at(-1);",
-                  "",
-                  "pm.test('Post-login XSRF-TOKEN is present', function () {",
-                  "    pm.expect(csrfToken, 'XSRF-TOKEN from Set-Cookie').to.be.a('string').and.not.empty;",
-                  "});",
-                  "",
-                  "if (csrfToken) {",
-                  "    pm.collectionVariables.set('csrfToken', csrfToken);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -132,11 +107,6 @@
                 "key": "Authorization",
                 "value": "Bearer {{accessToken}}",
                 "type": "text"
-              },
-              {
-                "key": "X-XSRF-TOKEN",
-                "value": "{{csrfToken}}",
-                "type": "text"
               }
             ],
             "url": {
@@ -155,9 +125,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Logout redirects to the login page', function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([302, 303]);",
-                  "});"
+                  "pm.test('Logout revokes the access token', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 204) {",
+                  "    pm.collectionVariables.set('accessToken', '');",
+                  "}"
                 ],
                 "type": "text/javascript"
               }
@@ -258,11 +232,6 @@
                 "key": "Authorization",
                 "value": "Bearer {{accessToken}}",
                 "type": "text"
-              },
-              {
-                "key": "X-XSRF-TOKEN",
-                "value": "{{csrfToken}}",
-                "type": "text"
               }
             ],
             "body": {
@@ -319,11 +288,6 @@
                 "key": "Authorization",
                 "value": "Bearer {{accessToken}}",
                 "type": "text"
-              },
-              {
-                "key": "X-XSRF-TOKEN",
-                "value": "{{csrfToken}}",
-                "type": "text"
               }
             ],
             "body": {
@@ -371,11 +335,6 @@
               {
                 "key": "Authorization",
                 "value": "Bearer {{accessToken}}",
-                "type": "text"
-              },
-              {
-                "key": "X-XSRF-TOKEN",
-                "value": "{{csrfToken}}",
                 "type": "text"
               }
             ],
