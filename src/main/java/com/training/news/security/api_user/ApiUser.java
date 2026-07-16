@@ -1,4 +1,4 @@
-package com.training.news.security;
+package com.training.news.security.api_user;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,6 +21,8 @@ public class ApiUser {
     private Role role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String token;
+    private LocalDateTime tokenExpiresAt;
 
 
 }

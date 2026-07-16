@@ -1,4 +1,4 @@
-package com.training.news.security;
+package com.training.news.security.api_user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
