@@ -3,6 +3,8 @@ package com.training.news.security;
 
 import com.training.news.security.token.DatabaseOpaqueTokenIntrospector;
 import com.training.news.security.token.TokenAuthenticationSuccessHandler;
+import com.training.news.security.token.TokenLogoutHandler;
+import com.training.news.security.token.TokenLogoutSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,11 +31,11 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http,
                                             TokenAuthenticationSuccessHandler tokenAuthenticationSuccessHandler,
-                                            DatabaseOpaqueTokenIntrospector databaseOpaqueTokenIntrospector) throws Exception {
+                                            DatabaseOpaqueTokenIntrospector databaseOpaqueTokenIntrospector,
+                                            TokenLogoutHandler tokenLogoutHandler,
+                                            TokenLogoutSuccessHandler tokenLogoutSuccessHandler) throws Exception {
 
-        http.csrf(csrf -> csrf
-                        .disable()
-                )
+        http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
                         .permitAll()
@@ -42,7 +44,9 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .formLogin(formLogin -> formLogin.successHandler(tokenAuthenticationSuccessHandler))
-                .oauth2ResourceServer(resourceServer -> resourceServer.opaqueToken(opaqueToken -> opaqueToken.introspector(databaseOpaqueTokenIntrospector)));
+                .oauth2ResourceServer(resourceServer -> resourceServer.opaqueToken(opaqueToken -> opaqueToken.introspector(databaseOpaqueTokenIntrospector)))
+                .logout(logout -> logout.addLogoutHandler(tokenLogoutHandler)
+                        .logoutSuccessHandler(tokenLogoutSuccessHandler));
         return http.build();
     }
 
