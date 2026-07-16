@@ -16,6 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+// TODO: Update these tests for authenticated users, CSRF tokens, role permissions,
+
 class NewsEndpointTests {
 
     private static final String NEWS_API = "/api/v1/news";
