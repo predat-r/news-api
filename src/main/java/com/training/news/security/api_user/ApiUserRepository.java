@@ -1,4 +1,4 @@
-package com.training.news.security;
+package com.training.news.security.api_user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package com.training.news.security;
+package com.training.news.security.api_user;
 
 import jakarta.persistence.*;
 import lombok.Getter;
