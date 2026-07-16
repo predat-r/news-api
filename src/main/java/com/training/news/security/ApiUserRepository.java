@@ -7,5 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface ApiUserRepository extends JpaRepository<ApiUser,Long> {
-    public Optional<ApiUser> findByUsername(String username);
+    Optional<ApiUser> findByUsername(String username);
+    Optional<ApiUser> findByToken(String token);
 }

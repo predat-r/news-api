@@ -7,3 +7,6 @@ databaseChangeLog:
       file: db/changelog/changes/003-create-api-user-table.yaml
   - include:
       file: db/changelog/changes/004-seed-api-user-table.yaml
+  - include:
+      file: db/changelog/changes/005-add-api-user-token-fields.yaml
+
