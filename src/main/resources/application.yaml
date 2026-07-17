@@ -60,6 +60,7 @@ logging:
   level:
     liquibase: debug
     sql: debug
+    org.springframework.security: debug
 
 
 

@@ -1,7 +1,7 @@
 package com.training.news.security.jwt;
 
+import com.training.news.security.api_user.ApiUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -19,15 +19,13 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
 
 
-    String issueToken(Authentication authentication) {
+    public String issueToken(ApiUser apiUser) {
         Instant currentTime = Instant.now();
-        List<String> roles = authentication.getAuthorities()
-                .stream()
-                .map(role -> role.getAuthority())
-                .toList();
+        List<String> roles = List.of("ROLE_" + apiUser.getRole()
+                .name());
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(JwtTokenSettings.ISSUER)
-                .subject(authentication.getName())
+                .subject(apiUser.getUsername())
                 .issuedAt(currentTime)
                 .expiresAt(currentTime.plus(JwtTokenSettings.ACCESS_TOKEN_LIFETIME))
                 .id(UUID.randomUUID()
