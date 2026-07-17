@@ -1,6 +1,7 @@
-package com.training.news.security.token;
+package com.training.news.security.jwt;
 
 
+import com.training.news.security.token.TokenResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,14 +19,15 @@ import java.io.IOException;
 @Component
 public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final TokenService tokenService;
+    private final JwtService jwtService;
     private final ObjectMapper objectMapper;
 
     @Override
-    public void onAuthenticationSuccess(@NonNull HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String username = authentication.getName();
-        String accessToken = tokenService.issueToken(username);
-        TokenResponse tokenResponse = new TokenResponse(accessToken, "Bearer", 86400);
+    public void onAuthenticationSuccess(@NonNull HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
+
+        String accessToken = jwtService.issueToken(authentication);
+        TokenResponse tokenResponse = new TokenResponse(accessToken, "Bearer", 3600);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getOutputStream(), tokenResponse);
     }

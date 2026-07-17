@@ -1,8 +1,7 @@
 package com.training.news.security;
 
 
-import com.training.news.security.token.DatabaseOpaqueTokenIntrospector;
-import com.training.news.security.token.TokenAuthenticationSuccessHandler;
+import com.training.news.security.jwt.TokenAuthenticationSuccessHandler;
 import com.training.news.security.token.TokenLogoutHandler;
 import com.training.news.security.token.TokenLogoutSuccessHandler;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +14,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -28,11 +29,23 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+
+        authoritiesConverter.setAuthoritiesClaimName("roles");
+        authoritiesConverter.setAuthorityPrefix("");
+
+        JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
+
+        authenticationConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+
+        return authenticationConverter;
+    }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http,
                                             TokenAuthenticationSuccessHandler tokenAuthenticationSuccessHandler,
-                                            DatabaseOpaqueTokenIntrospector databaseOpaqueTokenIntrospector,
                                             TokenLogoutHandler tokenLogoutHandler,
                                             TokenLogoutSuccessHandler tokenLogoutSuccessHandler) throws Exception {
 
@@ -45,9 +58,10 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .formLogin(formLogin -> formLogin.successHandler(tokenAuthenticationSuccessHandler))
-                .oauth2ResourceServer(resourceServer -> resourceServer.opaqueToken(opaqueToken -> opaqueToken.introspector(databaseOpaqueTokenIntrospector)))
+                .oauth2ResourceServer(resourceServer -> resourceServer.jwt(jwtConfig -> jwtConfig.jwtAuthenticationConverter(jwtAuthenticationConverter())))
                 .logout(logout -> logout.addLogoutHandler(tokenLogoutHandler)
-                        .logoutSuccessHandler(tokenLogoutSuccessHandler)).oauth2Login(Customizer.withDefaults());
+                        .logoutSuccessHandler(tokenLogoutSuccessHandler))
+                .oauth2Login(Customizer.withDefaults());
 
         return http.build();
     }
