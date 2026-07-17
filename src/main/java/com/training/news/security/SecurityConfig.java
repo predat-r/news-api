@@ -1,19 +1,19 @@
 package com.training.news.security;
 
 
-import com.training.news.security.token.DatabaseOpaqueTokenIntrospector;
-import com.training.news.security.token.TokenAuthenticationSuccessHandler;
-import com.training.news.security.token.TokenLogoutHandler;
-import com.training.news.security.token.TokenLogoutSuccessHandler;
+import com.training.news.security.jwt.JwtAuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -27,13 +27,23 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+
+        authoritiesConverter.setAuthoritiesClaimName("roles");
+        authoritiesConverter.setAuthorityPrefix("");
+
+        JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
+
+        authenticationConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+
+        return authenticationConverter;
+    }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                            TokenAuthenticationSuccessHandler tokenAuthenticationSuccessHandler,
-                                            DatabaseOpaqueTokenIntrospector databaseOpaqueTokenIntrospector,
-                                            TokenLogoutHandler tokenLogoutHandler,
-                                            TokenLogoutSuccessHandler tokenLogoutSuccessHandler) throws Exception {
+                                            JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler) throws Exception {
 
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -43,10 +53,10 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest()
                         .authenticated())
-                .formLogin(formLogin -> formLogin.successHandler(tokenAuthenticationSuccessHandler))
-                .oauth2ResourceServer(resourceServer -> resourceServer.opaqueToken(opaqueToken -> opaqueToken.introspector(databaseOpaqueTokenIntrospector)))
-                .logout(logout -> logout.addLogoutHandler(tokenLogoutHandler)
-                        .logoutSuccessHandler(tokenLogoutSuccessHandler));
+                .formLogin(formLogin -> formLogin.successHandler(jwtAuthenticationSuccessHandler))
+                .oauth2ResourceServer(resourceServer -> resourceServer.jwt(jwtConfig -> jwtConfig.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                .oauth2Login(Customizer.withDefaults());
+
         return http.build();
     }
 

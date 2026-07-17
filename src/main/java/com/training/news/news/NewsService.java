@@ -1,6 +1,7 @@
 package com.training.news.news;
 
 import com.training.news.exception.NewsNotFoundException;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,6 +27,7 @@ public class NewsService {
 
 
     @PreAuthorize("hasAnyRole('ADMIN','EDITOR','REPORTER')")
+    
     public NewsResponse createNews(NewsRequest request) {
         String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         News news = newsMapper.toEntity(request);
@@ -49,6 +51,7 @@ public class NewsService {
             or (hasRole('REPORTER')
             and @newsAuthorization.isOwner(#newsId, authentication.name))
             """)
+    
     public NewsResponse updateNews(Long newsId, NewsRequest request) {
         News existingNews = findNews(newsId);
 
@@ -66,6 +69,7 @@ public class NewsService {
             or (hasRole('REPORTER')
             and @newsAuthorization.isOwner(#newsId, authentication.name))
             """)
+    
     public void deleteNews(Long newsId) {
         News news = findNews(newsId);
         newsRepository.delete(news);
