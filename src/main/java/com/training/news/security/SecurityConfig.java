@@ -1,11 +1,11 @@
 package com.training.news.security;
 
 
+import com.training.news.security.google.GoogleJwtAuthenticationSuccessHandler;
 import com.training.news.security.jwt.JwtAuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -43,7 +43,8 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                            JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler) throws Exception {
+                                            GoogleJwtAuthenticationSuccessHandler googleJwtAuthenticationSuccessHandler
+            , JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler) throws Exception {
 
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -55,7 +56,7 @@ public class SecurityConfig {
                         .authenticated())
                 .formLogin(formLogin -> formLogin.successHandler(jwtAuthenticationSuccessHandler))
                 .oauth2ResourceServer(resourceServer -> resourceServer.jwt(jwtConfig -> jwtConfig.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-                .oauth2Login(Customizer.withDefaults());
+                .oauth2Login(oauth2 -> oauth2.successHandler(googleJwtAuthenticationSuccessHandler));
 
         return http.build();
     }
