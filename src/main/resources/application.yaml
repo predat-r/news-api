@@ -2,6 +2,7 @@ spring:
   application:
     name: news
 
+
   datasource:
     url: jdbc:h2:mem:newsdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
@@ -21,6 +22,10 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
   security:
+    jwt:
+      private-key: ${JWT_PRIVATE_KEY}
+      public-key: ${JWT_PUBLIC_KEY}
+
     oauth2:
       client:
         registration:
