@@ -1,5 +1,6 @@
 package com.training.news.news;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -18,7 +19,7 @@ public class NewsController {
 
     private final NewsService newsService;
 
-
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<NewsResponse> createNews(@Valid @RequestBody NewsRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(newsService.createNews(request));
@@ -34,13 +35,13 @@ public class NewsController {
         return ResponseEntity.ok(newsService.getNewsById(newsId));
     }
 
-
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{newsId}")
     public ResponseEntity<NewsResponse> updateNews(@PathVariable Long newsId, @Valid @RequestBody NewsRequest request) {
         return ResponseEntity.ok(newsService.updateNews(newsId, request));
     }
 
-
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{newsId}")
     public ResponseEntity<Void> deleteNews(@PathVariable Long newsId) {
         newsService.deleteNews(newsId);
