@@ -1,9 +1,7 @@
 package com.training.news.security;
 
 
-import com.training.news.security.jwt.TokenAuthenticationSuccessHandler;
-import com.training.news.security.token.TokenLogoutHandler;
-import com.training.news.security.token.TokenLogoutSuccessHandler;
+import com.training.news.security.jwt.JwtAuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -45,9 +43,7 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                            TokenAuthenticationSuccessHandler tokenAuthenticationSuccessHandler,
-                                            TokenLogoutHandler tokenLogoutHandler,
-                                            TokenLogoutSuccessHandler tokenLogoutSuccessHandler) throws Exception {
+                                            JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler) throws Exception {
 
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -57,10 +53,8 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest()
                         .authenticated())
-                .formLogin(formLogin -> formLogin.successHandler(tokenAuthenticationSuccessHandler))
+                .formLogin(formLogin -> formLogin.successHandler(jwtAuthenticationSuccessHandler))
                 .oauth2ResourceServer(resourceServer -> resourceServer.jwt(jwtConfig -> jwtConfig.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-                .logout(logout -> logout.addLogoutHandler(tokenLogoutHandler)
-                        .logoutSuccessHandler(tokenLogoutSuccessHandler))
                 .oauth2Login(Customizer.withDefaults());
 
         return http.build();
