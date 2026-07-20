@@ -10,7 +10,6 @@ public interface ApiUserRepository extends JpaRepository<ApiUser, Long> {
 
     Optional<ApiUser> findByUsername(String username);
 
-    Optional<ApiUser> findByGoogleSubject(String googleSubject);
 
     boolean existsByEmail(String email);
 

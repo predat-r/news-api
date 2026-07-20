@@ -20,7 +20,7 @@ public class ApiUser {
     private String password;
     @Email
     private String email;
-    private String googleSubject;
+
 
 
     @Enumerated(EnumType.STRING)
