@@ -4,7 +4,6 @@ import com.training.news.security.api_user.ApiUser;
 import com.training.news.security.jwt.JwtResponse;
 import com.training.news.security.jwt.JwtService;
 import com.training.news.security.jwt.JwtTokenSettings;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ public class OAuthJwtAuthenticationSuccessHandler implements AuthenticationSucce
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
 
 
         if (!(authentication instanceof OAuth2AuthenticationToken oauth2Authentication)) {
