@@ -15,7 +15,16 @@ public class ApiUserDetailsService implements UserDetailsService {
     // TODO: Add end-to-end tests for login, CSRF, role permissions, and reporter ownership.
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        ApiUser user = apiUserRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Invalid username or password"));
-        return User.builder().username(user.getUsername()).password(user.getPassword()).roles(user.getRole().name()).build();
+        ApiUser user = apiUserRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password"));
+        if (user.getPassword() == null) {
+            throw new UsernameNotFoundException("Invalid username or password");
+        }
+        return User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .roles(user.getRole()
+                        .name())
+                .build();
     }
 }
