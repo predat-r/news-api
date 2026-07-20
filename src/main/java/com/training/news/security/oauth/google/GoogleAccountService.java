@@ -1,12 +1,17 @@
-package com.training.news.security.google;
+package com.training.news.security.oauth.google;
 
 import com.training.news.security.api_user.ApiUser;
 import com.training.news.security.api_user.ApiUserRepository;
 import com.training.news.security.api_user.Role;
+import com.training.news.security.oauth.OAuthAccountService;
+import com.training.news.security.oauth.OAuthIdentity;
+import com.training.news.security.oauth.OAuthIdentityRepository;
+import com.training.news.security.oauth.OAuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +22,22 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class GoogleAccountService {
+public class GoogleAccountService implements OAuthAccountService {
 
     private final ApiUserRepository apiUserRepository;
+    private final OAuthIdentityRepository oauthIdentityRepository;
 
 
-    public ApiUser findOrCreateUser(OidcUser oidcUser) {
+    @Override
+    public OAuthProvider provider() {
+        return OAuthProvider.GOOGLE;
+    }
+
+    @Override
+    public ApiUser findOrCreateUser(OAuth2User oauth2User) {
+        if (!(oauth2User instanceof OidcUser oidcUser)) {
+            throw new OAuth2AuthenticationException(new OAuth2Error("invalid_google_principal"), "Google authentication did not produce an OIDC user");
+        }
         String googleSubject = oidcUser.getSubject();
         String email = oidcUser.getEmail();
         Boolean emailVerified = oidcUser.getEmailVerified();
@@ -33,11 +48,12 @@ public class GoogleAccountService {
         String normalizedEmail = email.trim()
                 .toLowerCase(Locale.ROOT);
 
-        Optional<ApiUser> existingUser = apiUserRepository.findByGoogleSubject(googleSubject);
-
-        if (existingUser.isPresent()) {
-            return existingUser.get();
+        Optional<OAuthIdentity> existingIdentity = oauthIdentityRepository.findByProviderAndProviderSubject(OAuthProvider.GOOGLE, googleSubject);
+        if (existingIdentity.isPresent()) {
+            return existingIdentity.get()
+                    .getApiUser();
         }
+
         if (apiUserRepository.existsByEmail(normalizedEmail) || apiUserRepository.existsByUsername(normalizedEmail)) {
             throw new OAuth2AuthenticationException(new OAuth2Error("google_account_conflict"), "An account already exists with this email");
 
@@ -47,12 +63,25 @@ public class GoogleAccountService {
         ApiUser apiUser = new ApiUser();
         apiUser.setUsername(normalizedEmail);
         apiUser.setEmail(normalizedEmail);
-        apiUser.setGoogleSubject(googleSubject);
         apiUser.setPassword(null);
         apiUser.setRole(Role.REPORTER);
         apiUser.setCreatedAt(currentTime);
         apiUser.setUpdatedAt(currentTime);
-        return apiUserRepository.save(apiUser);
+        apiUserRepository.save(apiUser);
+
+        OAuthIdentity oauthIdentity = new OAuthIdentity();
+        oauthIdentity.setApiUser(apiUser);
+        oauthIdentity.setProvider(OAuthProvider.GOOGLE);
+        oauthIdentity.setProviderSubject(googleSubject);
+        oauthIdentity.setCreatedAt(currentTime);
+        oauthIdentity.setUpdatedAt(currentTime);
+        oauthIdentityRepository.save(oauthIdentity);
+
+        return apiUser;
+
+
 
     }
+
+
 }

@@ -3,7 +3,6 @@ package com.training.news.security.jwt;
 
 import com.training.news.security.api_user.ApiUser;
 import com.training.news.security.api_user.ApiUserRepository;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +25,11 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
     @Override
     public void onAuthenticationSuccess(@NonNull HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
         ApiUser apiUser = apiUserRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException("Authenticated user could not be found"));
         String accessToken = jwtService.issueToken(apiUser);
-        JwtResponse tokenResponse = new JwtResponse(accessToken, "Bearer", 3600);
+        JwtResponse tokenResponse = new JwtResponse(accessToken, "Bearer", JwtTokenSettings.ACCESS_TOKEN_LIFETIME.toSeconds());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getOutputStream(), tokenResponse);
     }

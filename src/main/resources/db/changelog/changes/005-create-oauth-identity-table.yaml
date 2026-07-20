@@ -1,0 +1,79 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-oauth-identity-table
+      author: haris.naeem
+      changes:
+        - createTable:
+            tableName: oauth_identity
+            columns:
+              - column:
+                  name: identity_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_oauth_identity
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: provider
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: provider_subject
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addColumn:
+            tableName: api_user
+            columns:
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+
+        - addUniqueConstraint:
+            tableName: api_user
+            columnNames: email
+            constraintName: uk_api_user_email
+        - dropNotNullConstraint:
+            tableName: api_user
+            columnName: password
+            columnDataType: VARCHAR(255)
+        - addForeignKeyConstraint:
+            baseTableName: oauth_identity
+            baseColumnNames: user_id
+            referencedTableName: api_user
+            referencedColumnNames: user_id
+            constraintName: fk_oauth_identity_api_user
+            onDelete: CASCADE
+
+        - addUniqueConstraint:
+            tableName: oauth_identity
+            columnNames: provider, provider_subject
+            constraintName: uk_oauth_identity_provider_subject
+
+        - addUniqueConstraint:
+            tableName: oauth_identity
+            columnNames: user_id, provider
+            constraintName: uk_oauth_identity_user_provider
+
+
+
+
+
+
