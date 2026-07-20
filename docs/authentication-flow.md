@@ -89,19 +89,19 @@ Before any login occurs, Spring creates the security components:
 sequenceDiagram
     actor Client
     participant Security as Spring Security
-    participant Details as ApiUserDetailsService
+    participant UserDetailsSvc as ApiUserDetailsService
     participant Repo as ApiUserRepository
     participant DB as api_user
     participant Handler as JwtAuthenticationSuccessHandler
     participant JWT as JwtService
 
     Client->>Security: POST /login with username and password
-    Security->>Details: loadUserByUsername(username)
-    Details->>Repo: findByUsername(username)
+    Security->>UserDetailsSvc: loadUserByUsername(username)
+    UserDetailsSvc->>Repo: findByUsername(username)
     Repo->>DB: SELECT api_user
     DB-->>Repo: local user
-    Repo-->>Details: ApiUser
-    Details-->>Security: UserDetails with password hash and role
+    Repo-->>UserDetailsSvc: ApiUser
+    UserDetailsSvc-->>Security: UserDetails with password hash and role
     Security->>Security: BCrypt password comparison
     alt credentials are valid
         Security->>Handler: onAuthenticationSuccess(...)
