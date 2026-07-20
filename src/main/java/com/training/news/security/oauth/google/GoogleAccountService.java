@@ -1,4 +1,4 @@
-package com.training.news.security.google;
+package com.training.news.security.oauth.google;
 
 import com.training.news.security.api_user.ApiUser;
 import com.training.news.security.api_user.ApiUserRepository;

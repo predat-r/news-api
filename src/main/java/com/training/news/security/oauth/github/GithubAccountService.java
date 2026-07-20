@@ -1,4 +1,4 @@
-package com.training.news.security.github;
+package com.training.news.security.oauth.github;
 
 import com.training.news.security.api_user.ApiUser;
 import com.training.news.security.api_user.ApiUserRepository;
