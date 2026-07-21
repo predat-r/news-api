@@ -11,10 +11,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -26,20 +26,6 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
-
-        authoritiesConverter.setAuthoritiesClaimName("roles");
-        authoritiesConverter.setAuthorityPrefix("");
-
-        JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
-
-        authenticationConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
-
-        return authenticationConverter;
     }
 
     @Bean
@@ -57,7 +43,9 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .formLogin(formLogin -> formLogin.successHandler(jwtAuthenticationSuccessHandler))
-                .oauth2ResourceServer(resourceServer -> resourceServer.jwt(jwtConfig -> jwtConfig.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                .oauth2ResourceServer(resourceServer -> resourceServer.jwt(jwt -> jwt.jwtAuthenticationConverter(token ->
+                        new JwtAuthenticationToken(token,
+                                AuthorityUtils.createAuthorityList(token.getClaimAsStringList("roles"))))))
                 .oauth2Login(oauth2 -> oauth2.successHandler(oauthJwtAuthenticationSuccessHandler));
 
         return http.build();
