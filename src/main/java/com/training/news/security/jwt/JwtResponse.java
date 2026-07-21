@@ -12,3 +12,4 @@ public class JwtResponse {
     private final String tokenType;
     private final long expiresIn;
 }
+

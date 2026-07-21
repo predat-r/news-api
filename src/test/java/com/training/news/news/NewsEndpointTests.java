@@ -1,15 +1,19 @@
 package com.training.news.news;
 
+import com.training.news.security.api_user.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,13 +35,14 @@ class NewsEndpointTests {
     @Test
     void createNewsReturnsCreatedNews() throws Exception {
         mockMvc.perform(post(NEWS_API)
+                        .with(authenticatedAs("reporter1", Role.REPORTER))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(newsRequest("Create title", "Create details", "Reporter A")))
+                        .content(newsRequest("Create title", "Create details")))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.newsId").isNumber())
                 .andExpect(jsonPath("$.title").value("Create title"))
                 .andExpect(jsonPath("$.details").value("Create details"))
-                .andExpect(jsonPath("$.reportedBy").value("Reporter A"));
+                .andExpect(jsonPath("$.reportedBy").value("reporter1"));
     }
 
     @Test
@@ -57,7 +62,8 @@ class NewsEndpointTests {
     @Test
     void getNewsByIdReturnsNews() throws Exception {
         JsonNode createdNews = createNews("Get title", "Get details", "Reporter C");
-        long newsId = createdNews.get("newsId").asLong();
+        long newsId = createdNews.get("newsId")
+                .asLong();
 
         mockMvc.perform(get(NEWS_API + "/{newsId}", newsId))
                 .andExpect(status().isOk())
@@ -70,16 +76,18 @@ class NewsEndpointTests {
     @Test
     void updateNewsReturnsUpdatedNews() throws Exception {
         JsonNode createdNews = createNews("Before title", "Before details", "Reporter D");
-        long newsId = createdNews.get("newsId").asLong();
+        long newsId = createdNews.get("newsId")
+                .asLong();
 
         mockMvc.perform(put(NEWS_API + "/{newsId}", newsId)
+                        .with(authenticatedAs("Reporter D", Role.REPORTER))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(newsRequest("After title", "After details", "Reporter E")))
+                        .content(newsRequest("After title", "After details")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.newsId").value(newsId))
                 .andExpect(jsonPath("$.title").value("After title"))
                 .andExpect(jsonPath("$.details").value("After details"))
-                .andExpect(jsonPath("$.reportedBy").value("Reporter E"))
+                .andExpect(jsonPath("$.reportedBy").value("Reporter D"))
                 .andExpect(jsonPath("$.reportedAt").exists())
                 .andExpect(jsonPath("$.updatedAt").exists());
     }
@@ -87,9 +95,11 @@ class NewsEndpointTests {
     @Test
     void deleteNewsRemovesNews() throws Exception {
         JsonNode createdNews = createNews("Delete title", "Delete details", "Reporter F");
-        long newsId = createdNews.get("newsId").asLong();
+        long newsId = createdNews.get("newsId")
+                .asLong();
 
-        mockMvc.perform(delete(NEWS_API + "/{newsId}", newsId))
+        mockMvc.perform(delete(NEWS_API + "/{newsId}", newsId)
+                .with(authenticatedAs("Reporter F",Role.REPORTER)))
                 .andExpect(status().isNoContent());
 
         mockMvc.perform(get(NEWS_API + "/{newsId}", newsId))
@@ -99,32 +109,42 @@ class NewsEndpointTests {
     @Test
     void invalidCreateRequestReturnsValidationErrors() throws Exception {
         mockMvc.perform(post(NEWS_API)
+                        .with(authenticatedAs("reporter1", Role.REPORTER))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(newsRequest("", "", "")))
+                        .content(newsRequest("", "")))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Validation failed"))
                 .andExpect(jsonPath("$.errors.title").value("Title is required"))
-                .andExpect(jsonPath("$.errors.details").value("Details are required"))
-                .andExpect(jsonPath("$.errors.reportedBy").value("Reporter is required"));
+                .andExpect(jsonPath("$.errors.details").value("Details are required"));
+
     }
 
     private JsonNode createNews(String title, String details, String reportedBy) throws Exception {
         MvcResult result = mockMvc.perform(post(NEWS_API)
+                        .with(authenticatedAs(reportedBy, Role.REPORTER))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(newsRequest(title, details, reportedBy)))
+                        .content(newsRequest(title, details)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        return objectMapper.readTree(result.getResponse().getContentAsString());
+        return objectMapper.readTree(result.getResponse()
+                .getContentAsString());
     }
 
-    private String newsRequest(String title, String details, String reportedBy) {
+    private String newsRequest(String title, String details) {
         return """
-                {
-                  "title": "%s",
-                  "details": "%s",
-                  "reportedBy": "%s"
+                                {
+                                  "title": "%s",
+                                  "details": "%s"
                 }
-                """.formatted(title, details, reportedBy);
+                """.formatted(title, details);
+
+
+    }
+
+    private RequestPostProcessor authenticatedAs(String username, Role role) {
+        return jwt()
+                .jwt(token -> token.subject(username))
+                .authorities(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 }
