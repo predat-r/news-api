@@ -46,6 +46,7 @@ flowchart LR
         JwtService[JwtService.issueToken]
         Encoder[JwtEncoder and RSA private key]
         Token[News API JWT]
+        ResponseWriter[JwtResponseWriter]
         Decoder[JwtDecoder and RSA public key]
     end
 
@@ -67,7 +68,10 @@ flowchart LR
     IdentityTable --> UserTable
     LocalHandler --> JwtService
     OAuthHandler --> JwtService
-    JwtService --> Encoder --> Token --> Client
+    JwtService --> Encoder --> Token
+    LocalHandler --> ResponseWriter
+    OAuthHandler --> ResponseWriter
+    Token --> ResponseWriter --> Client
     Client --> Decoder
 ```
 
@@ -90,6 +94,7 @@ security
 |   |-- JwtAuthenticationSuccessHandler.java
 |   |-- JwtKeyConfig.java
 |   |-- JwtResponse.java
+|   |-- JwtResponseWriter.java
 |   |-- JwtService.java
 |   `-- JwtTokenSettings.java
 |-- oauth
@@ -106,10 +111,10 @@ security
 
 - Root configuration selects the authentication mechanisms and URL rules.
 - `api_user` owns local accounts, roles, and password-based user loading.
-- `jwt` owns RSA key loading, JWT issuance, validation, and the local-login
-  response.
+- `jwt` owns RSA key loading, JWT issuance, validation, and the shared JWT
+  response format used by all successful login paths.
 - `oauth` owns the provider contract, external identity persistence, provider
-  selection, the shared OAuth success response, and provider subpackages.
+  selection, OAuth login orchestration, and provider subpackages.
 - `oauth.google` and `oauth.github` understand provider-specific attributes and
   provision local accounts.
 
@@ -145,6 +150,7 @@ sequenceDiagram
     participant UserDB as api_user
     participant Handler as JwtAuthenticationSuccessHandler
     participant JWT as JwtService
+    participant Writer as JwtResponseWriter
 
     Client->>Security: POST /login with username and password
     Security->>UserLoader: loadUserByUsername(username)
@@ -164,7 +170,8 @@ sequenceDiagram
             UserRepo-->>Handler: ApiUser
             Handler->>JWT: issueToken(apiUser)
             JWT-->>Handler: Signed News API JWT
-            Handler-->>Client: JSON JwtResponse
+            Handler->>Writer: writeResponse(response, token)
+            Writer-->>Client: JSON JwtResponse
         else Password is invalid
             Security-->>Client: Generic authentication failure
         end
@@ -180,8 +187,9 @@ with the same generic `UsernameNotFoundException` used for an unknown username,
 so form login neither accepts them nor reveals which kind of account exists.
 Their Google or GitHub login flow is unaffected.
 
-The local success handler reloads the complete `ApiUser`, issues a JWT, and
-writes it directly as JSON instead of redirecting to another page.
+The local success handler reloads the complete `ApiUser` and asks `JwtService`
+to issue a JWT. It then delegates JSON serialization to the shared
+`JwtResponseWriter` instead of redirecting to another page.
 
 ## Shared OAuth Login
 
@@ -200,6 +208,7 @@ sequenceDiagram
     participant Services as List of OAuthAccountService
     participant ProviderSvc as Selected provider service
     participant JWT as JwtService
+    participant Writer as JwtResponseWriter
 
     Browser->>Spring: Complete Google or GitHub authorization
     Spring->>Handler: OAuth2AuthenticationToken
@@ -210,7 +219,8 @@ sequenceDiagram
     ProviderSvc-->>Handler: Local ApiUser
     Handler->>JWT: issueToken(apiUser)
     JWT-->>Handler: Signed News API JWT
-    Handler-->>Browser: JSON JwtResponse
+    Handler->>Writer: writeResponse(response, token)
+    Writer-->>Browser: JSON JwtResponse
 ```
 
 `OAuthAccountService` is the provider strategy contract. Each implementation:
@@ -409,7 +419,8 @@ flowchart TD
     PrivateKey[RSA private key] --> Encoder[JwtEncoder]
     Claims --> Encoder
     Encoder --> Token[RS256 News API JWT]
-    Token --> Response[JwtResponse]
+    Token --> Writer[JwtResponseWriter]
+    Writer --> Response[JwtResponse JSON]
     Response --> Client[Client stores accessToken]
 
     Token --> Header[Header with typ JWT and alg RS256]
@@ -437,6 +448,12 @@ The response shape is:
   "expiresIn": 3600
 }
 ```
+
+`JwtAuthenticationSuccessHandler` and
+`OAuthJwtAuthenticationSuccessHandler` both delegate response construction and
+JSON serialization to `JwtResponseWriter`. This keeps the token response
+identical for local, Google, and GitHub logins while `JwtService` remains
+responsible only for creating signed tokens.
 
 The private RSA key signs tokens. The public RSA key verifies them. Google and
 GitHub tokens cannot replace this JWT because the resource server expects the
