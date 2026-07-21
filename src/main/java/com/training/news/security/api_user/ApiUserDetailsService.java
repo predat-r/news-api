@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class ApiUserDetailsService implements UserDetailsService {
     private final ApiUserRepository apiUserRepository;
 
-    // TODO: Add end-to-end tests for login, CSRF, role permissions, and reporter ownership.
     @Override
     public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         ApiUser user = apiUserRepository.findByUsername(username)
