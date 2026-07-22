@@ -30,7 +30,8 @@ public class OAuthJwtAuthenticationSuccessHandler implements AuthenticationSucce
 
 
         if (!(authentication instanceof OAuth2AuthenticationToken oauth2Authentication)) {
-            throw new OAuth2AuthenticationException(new OAuth2Error("invalid_oauth_authentication"), "OAuth login did not produce an OAuth2 authentication token");
+            throw new OAuth2AuthenticationException(new OAuth2Error("invalid_oauth_authentication"),
+                    "OAuth login did not produce an OAuth2 authentication token");
         }
         String provider = oauth2Authentication.getAuthorizedClientRegistrationId();
         OAuthAccountService accountService = findAccountService(provider);
@@ -46,6 +47,8 @@ public class OAuthJwtAuthenticationSuccessHandler implements AuthenticationSucce
                         .getRegistrationId()
                         .equals(provider))
                 .findFirst()
-                .orElseThrow(() -> new OAuth2AuthenticationException(new OAuth2Error("unsupported_oauth_provider"), "Unsupported OAuth provider: " + provider));
+                .orElseThrow(
+                        () -> new OAuth2AuthenticationException(new OAuth2Error("unsupported_oauth_provider"),
+                                "Unsupported OAuth provider: " + provider));
     }
 }

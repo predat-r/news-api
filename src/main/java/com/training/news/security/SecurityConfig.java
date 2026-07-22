@@ -35,17 +35,21 @@ public class SecurityConfig {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
+                .authorizeHttpRequests(
+                        authorize -> authorize.requestMatchers("/swagger-ui/**", "/swagger-ui.html",
+                                        "/v3/api-docs/**")
 
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/news", "/api/v1/news/**")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                                .permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/news", "/api/v1/news/**")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated())
                 .formLogin(formLogin -> formLogin.successHandler(jwtAuthenticationSuccessHandler))
-                .oauth2ResourceServer(resourceServer -> resourceServer.jwt(jwt -> jwt.jwtAuthenticationConverter(token ->
-                        new JwtAuthenticationToken(token,
-                                AuthorityUtils.createAuthorityList(token.getClaimAsStringList("roles"))))))
+                .oauth2ResourceServer(
+                        resourceServer -> resourceServer.jwt(jwt -> jwt.jwtAuthenticationConverter(
+                                token -> new JwtAuthenticationToken(token,
+                                        AuthorityUtils.createAuthorityList(
+                                                token.getClaimAsStringList("roles"))))))
                 .oauth2Login(oauth2 -> oauth2.successHandler(oauthJwtAuthenticationSuccessHandler));
 
         return http.build();
