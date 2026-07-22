@@ -17,6 +17,10 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+    properties:
+      hibernate:
+        generate_statistics: true
+        format_sql: true
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
@@ -44,9 +48,7 @@ management:
     sampling:
       probability: 1
 
-
-
-  open telemetry:
+  opentelemetry:
     tracing:
       export:
         otlp:
@@ -64,6 +66,8 @@ logging:
     liquibase: debug
     sql: debug
     org.springframework.security: debug
+    org.hibernate : debug
+
 
 
 
