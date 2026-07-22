@@ -27,6 +27,12 @@
         <url/>
     </scm>
     <properties>
+        <sonar.organization>predat-r</sonar.organization>
+        <sonar.projectKey>predat-r_news-api</sonar.projectKey>
+
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.build.directory}/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
         <java.version>17</java.version>
         <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
     </properties>
@@ -330,6 +336,21 @@
                                 </rule>
                             </rules>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>5.2.0.4988</version>
+
+                <executions>
+                    <execution>
+                        <id>sonar-analysis</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sonar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
