@@ -3,3 +3,6 @@
 .mvn
 target
 *.iml
+.env
+*.pem
+*.b64
