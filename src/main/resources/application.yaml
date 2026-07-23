@@ -13,6 +13,15 @@ spring:
     console:
       enabled: true
 
+
+  cache:
+    type: hazelcast
+    cache-names:
+      - newsById
+
+  hazelcast:
+    config: classpath:hazelcast.yaml
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -66,7 +75,7 @@ logging:
     liquibase: debug
     sql: debug
     org.springframework.security: debug
-    org.hibernate : debug
+    org.hibernate: debug
 
 
 

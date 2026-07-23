@@ -1,6 +1,8 @@
 package com.training.news.news;
 
 import com.training.news.exception.NewsNotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -40,6 +42,8 @@ public class NewsService {
         return newsRepository.findAll(pageRequest).map(newsMapper::toResponse);
     }
 
+
+    @Cacheable(cacheNames = "newsById", key = "#newsId")
     @Transactional(readOnly = true)
     public NewsResponse getNewsById(Long newsId) {
         return newsMapper.toResponse(findNews(newsId));
@@ -50,7 +54,8 @@ public class NewsService {
             or (hasRole('REPORTER')
             and @newsAuthorization.isOwner(#newsId, authentication.name))
             """)
-    
+
+    @CacheEvict(cacheNames = "newsById", key = "#newsId")
     public NewsResponse updateNews(Long newsId, NewsRequest request) {
         News existingNews = findNews(newsId);
 
@@ -68,7 +73,7 @@ public class NewsService {
             or (hasRole('REPORTER')
             and @newsAuthorization.isOwner(#newsId, authentication.name))
             """)
-    
+    @CacheEvict(cacheNames = "newsById", key = "#newsId")
     public void deleteNews(Long newsId) {
         News news = findNews(newsId);
         newsRepository.delete(news);
