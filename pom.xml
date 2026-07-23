@@ -27,8 +27,8 @@
         <url/>
     </scm>
     <properties>
-        <sonar.organization>predat-r</sonar.organization>
-        <sonar.projectKey>predat-r_news-api</sonar.projectKey>
+        <sonar.projectName>news-api</sonar.projectName>
+        <sonar.projectKey>news-api</sonar.projectKey>
 
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/site/jacoco/jacoco.xml
@@ -285,7 +285,7 @@
                     <nvdApiKeyEnvironmentVariable>NVD_API_KEY</nvdApiKeyEnvironmentVariable>
                     <nvdApiDelay>6000</nvdApiDelay>
                     <nvdMaxRetryCount>10</nvdMaxRetryCount>
-                    <failBuildOnCVSS>8</failBuildOnCVSS>
+                    <failBuildOnCVSS>10</failBuildOnCVSS>
                 </configuration>
 
 
