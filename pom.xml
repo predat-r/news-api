@@ -275,25 +275,30 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.owasp</groupId>-->
-<!--                <artifactId>dependency-check-maven</artifactId>-->
-<!--                <version>12.2.2</version>-->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>12.2.2</version>
 
-<!--                <configuration>-->
-<!--                    <failBuildOnCVSS>8</failBuildOnCVSS>-->
-<!--                </configuration>-->
 
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>dependency-vulnerability-check</id>-->
-<!--                        <phase>verify</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>check</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+                <configuration>
+                    <nvdApiKeyEnvironmentVariable>NVD_API_KEY</nvdApiKeyEnvironmentVariable>
+                    <nvdApiDelay>6000</nvdApiDelay>
+                    <nvdMaxRetryCount>10</nvdMaxRetryCount>
+                    <failBuildOnCVSS>8</failBuildOnCVSS>
+                </configuration>
+
+
+                <executions>
+                    <execution>
+                        <id>dependency-vulnerability-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
