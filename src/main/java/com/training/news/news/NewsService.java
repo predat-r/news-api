@@ -1,7 +1,6 @@
 package com.training.news.news;
 
 import com.training.news.exception.NewsNotFoundException;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
