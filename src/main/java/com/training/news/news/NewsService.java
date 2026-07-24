@@ -79,7 +79,7 @@ public class NewsService {
         newsRepository.delete(news);
     }
 
-    private News findNews(Long newsId) {
+    public News findNews(Long newsId) {
         return newsRepository.findById(newsId).orElseThrow(() -> new NewsNotFoundException(newsId));
     }
 }
