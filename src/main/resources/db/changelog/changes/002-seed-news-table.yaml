@@ -8,10 +8,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: title
-                  value: "Northbridge University Opens Community Greenhouse"
+                  value: "Tens of Thousands Evacuated as Wildfires Spread Across Southern France"
               - column:
                   name: details
-                  value: "Northbridge University has opened a rooftop greenhouse where students and local volunteers will grow vegetables throughout the year. The project will support agricultural research, host free gardening workshops, and donate part of each harvest to nearby food banks.."
+                  value: "Tens of thousands of residents and tourists have been evacuated from several towns in southern France after strong winds and prolonged dry conditions caused wildfires to spread rapidly across forested areas. Emergency services deployed hundreds of firefighters, water-bombing aircraft, and helicopters to contain the flames and protect nearby communities. Several roads were temporarily closed, while local authorities opened emergency shelters for displaced families and visitors. Officials said no major loss of life had been reported, but a number of homes, farms, and public buildings were damaged. Weather forecasters warned that high temperatures and gusty winds could continue to complicate firefighting operations over the next two days."
               - column:
                   name: reported_by
                   value: "reporter1"
@@ -21,6 +21,7 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   valueDate: "2026-07-13T09:00:00"
+
         - insert:
             tableName: news
             columns:
@@ -29,7 +30,7 @@ databaseChangeLog:
                   value: "Riverton Launches Six-Month Electric Bus Pilot"
               - column:
                   name: details
-                  value: "Riverton has introduced twelve electric buses on three of its busiest routes as part of a six-month transport pilot. City officials will measure reliability, passenger feedback, energy use, and operating costs before deciding whether to expand the fleet next year."
+                  value: "Riverton has introduced twelve fully electric buses on three of its busiest public transport routes as part of a six-month pilot programme. The initiative is intended to reduce fuel consumption, lower air pollution, and improve the reliability of daily services for commuters. Charging stations have been installed at two major bus depots, and drivers have completed specialised training for operating the new vehicles. During the trial, city officials will monitor passenger numbers, maintenance requirements, battery performance, operating costs, and public feedback. If the programme performs successfully, the transport department plans to purchase additional electric buses and gradually replace older diesel vehicles across the city."
               - column:
                   name: reported_by
                   value: "Editor"

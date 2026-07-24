@@ -50,8 +50,8 @@ public class NewsController {
     }
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{newsId}/summary")
-    public ResponseEntity<String> summary(@PathVariable Long newsId) {
-        String summary = newsAiService.getAiGeneratedSummary(newsId);
-        return ResponseEntity.ok(summary);
+    public ResponseEntity<NewsSummaryResponse> summary(@PathVariable Long newsId) {
+        NewsSummaryResponse newsSummaryResponse = newsAiService.getAiGeneratedSummary(newsId);
+        return ResponseEntity.ok(newsSummaryResponse);
     }
 }

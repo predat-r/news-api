@@ -17,9 +17,9 @@ public class NewsAiService {
         this.newsService = newsService;
     }
 
-    public String generateSummary(News news) {
+    public NewsSummaryResponse generateSummary(News news) {
         return chatClient.prompt()
-                .system("You are a news editor and are ordered to generate a 200-300 character summary for following news piece")
+                .system("You are a news editor and are ordered to generate a 400-500 character summary for following news piece")
                 .user(user -> user.text("""
                                 News title:{title}
                                 
@@ -29,7 +29,7 @@ public class NewsAiService {
                         .param("title", news.getTitle())
                         .param("details", news.getDetails()))
                 .call()
-                .content();
+                .entity(NewsSummaryResponse.class);
     }
 
     @PreAuthorize("""
@@ -37,7 +37,7 @@ public class NewsAiService {
             or (hasRole('REPORTER')
             and @newsAuthorization.isOwner(#newsId, authentication.name))
             """)
-    public String getAiGeneratedSummary(Long newsId) {
+    public NewsSummaryResponse getAiGeneratedSummary(Long newsId) {
         News news = newsService.findNews(newsId);
         return generateSummary(news);
 
