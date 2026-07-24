@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class NewsController {
 
     private final NewsService newsService;
+    private final NewsAiService newsAiService;
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
@@ -46,5 +47,11 @@ public class NewsController {
     public ResponseEntity<Void> deleteNews(@PathVariable Long newsId) {
         newsService.deleteNews(newsId);
         return ResponseEntity.noContent().build();
+    }
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/{newsId}/summary")
+    public ResponseEntity<NewsSummaryResponse> summary(@PathVariable Long newsId) {
+        NewsSummaryResponse newsSummaryResponse = newsAiService.getAiGeneratedSummary(newsId);
+        return ResponseEntity.ok(newsSummaryResponse);
     }
 }

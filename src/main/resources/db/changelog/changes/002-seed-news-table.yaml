@@ -8,28 +8,29 @@ databaseChangeLog:
             columns:
               - column:
                   name: title
-                  value: "Spring Boot News Service Launched"
+                  value: "Tens of Thousands Evacuated as Wildfires Spread Across Southern France"
               - column:
                   name: details
-                  value: "The news service now supports CRUD operations with pagination."
+                  value: "Tens of thousands of residents and tourists have been evacuated from several towns in southern France after strong winds and prolonged dry conditions caused wildfires to spread rapidly across forested areas. Emergency services deployed hundreds of firefighters, water-bombing aircraft, and helicopters to contain the flames and protect nearby communities. Several roads were temporarily closed, while local authorities opened emergency shelters for displaced families and visitors. Officials said no major loss of life had been reported, but a number of homes, farms, and public buildings were damaged. Weather forecasters warned that high temperatures and gusty winds could continue to complicate firefighting operations over the next two days."
               - column:
                   name: reported_by
-                  value: "Editor"
+                  value: "reporter1"
               - column:
                   name: reported_at
                   valueDate: "2026-07-13T09:00:00"
               - column:
                   name: updated_at
                   valueDate: "2026-07-13T09:00:00"
+
         - insert:
             tableName: news
             columns:
               - column:
                   name: title
-                  value: "Liquibase Migrations Enabled"
+                  value: "Riverton Launches Six-Month Electric Bus Pilot"
               - column:
                   name: details
-                  value: "Database schema and seed data are managed through Liquibase changelogs."
+                  value: "Riverton has introduced twelve fully electric buses on three of its busiest public transport routes as part of a six-month pilot programme. The initiative is intended to reduce fuel consumption, lower air pollution, and improve the reliability of daily services for commuters. Charging stations have been installed at two major bus depots, and drivers have completed specialised training for operating the new vehicles. During the trial, city officials will monitor passenger numbers, maintenance requirements, battery performance, operating costs, and public feedback. If the programme performs successfully, the transport department plans to purchase additional electric buses and gradually replace older diesel vehicles across the city."
               - column:
                   name: reported_by
                   value: "Editor"
