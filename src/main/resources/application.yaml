@@ -9,6 +9,13 @@ spring:
     username: sa
     password:
 
+  ai:
+    google:
+        genai:
+          api-key: ${GEMINI_API_KEY}
+          chat:
+            model: gemini-3.6-flash
+
   h2:
     console:
       enabled: true
