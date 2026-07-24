@@ -1,4 +1,4 @@
-package com.training.news.news;
+package com.training.news.news.ai;
 
 import java.util.Set;
 

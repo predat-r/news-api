@@ -1,6 +1,8 @@
-package com.training.news.news;
+package com.training.news.news.ai;
 
 
+import com.training.news.news.News;
+import com.training.news.news.NewsService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;

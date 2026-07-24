@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class NewsController {
 
     private final NewsService newsService;
-    private final NewsAiService newsAiService;
+
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
@@ -55,20 +54,5 @@ public class NewsController {
                 .build();
     }
 
-    @SecurityRequirement(name = "bearerAuth")
-    @GetMapping("/{newsId}/summary")
-    public ResponseEntity<NewsSummaryResponse> summary(@PathVariable Long newsId) {
-        NewsSummaryResponse newsSummaryResponse = newsAiService.getAiGeneratedSummary(newsId);
-        return ResponseEntity.ok(newsSummaryResponse);
-    }
 
-    @SecurityRequirement(name = "bearerAuth")
-    @PostMapping("/{newsId}/ask")
-    public ResponseEntity<AskNewsResponse> summary(@PathVariable Long newsId,
-                                                   @Valid @RequestBody AskNewsRequest askNewsRequest,
-                                                   Authentication authentication) {
-        AskNewsResponse askNewsResponse = newsAiService.getAiGeneratedAnswer(newsId,
-                askNewsRequest.question(), authentication);
-        return ResponseEntity.ok(askNewsResponse);
-    }
 }
