@@ -10,18 +10,23 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.CompletableFuture;
+
 @Service
 public class NewsAiService {
 
     private final ChatClient chatClient;
     private final NewsService newsService;
     private final MessageChatMemoryAdvisor chatMemoryAdvisor;
+    private final NewsAiAsyncWorker newsAiAsyncWorker;
 
-    public NewsAiService(ChatClient.Builder builder, NewsService newsService, ChatMemory chatMemory) {
+    public NewsAiService(ChatClient.Builder builder, NewsService newsService, ChatMemory chatMemory,
+                         NewsAiAsyncWorker newsAiAsyncWorker) {
         this.chatClient = builder.build();
         this.newsService = newsService;
         this.chatMemoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory)
                 .build();
+        this.newsAiAsyncWorker = newsAiAsyncWorker;
     }
 
     public NewsSummaryResponse generateSummary(News news) {
@@ -39,26 +44,6 @@ public class NewsAiService {
                 .entity(NewsSummaryResponse.class);
     }
 
-    private AskNewsResponse generateAnswerToUserQuestion(News news, String question, String chatId) {
-        return chatClient.prompt()
-                .advisors(advisor -> advisor.advisors(chatMemoryAdvisor)
-                        .param(ChatMemory.CONVERSATION_ID, chatId))
-                .system("You are a news editor and are ordered to answer the user query using only the provided news article")
-                .user(user -> user.text("""
-                                News title:{title}
-                                
-                                News details:
-                                {details}
-                                
-                                User question:
-                                {question}
-                                """)
-                        .param("title", news.getTitle())
-                        .param("details", news.getDetails())
-                        .param("question", question))
-                .call()
-                .entity(AskNewsResponse.class);
-    }
 
     @PreAuthorize("""
             hasAnyRole('ADMIN', 'EDITOR')
@@ -75,11 +60,12 @@ public class NewsAiService {
             hasAnyRole('ADMIN', 'EDITOR', 'REPORTER')
             
             """)
-    public AskNewsResponse getAiGeneratedAnswer(Long newsId, String question, Authentication authentication) {
+    public CompletableFuture<AskNewsResponse> getAiGeneratedAnswer(Long newsId, String question,
+                                                                   Authentication authentication) {
 
         News news = newsService.findNews(newsId);
         String chatId = newsId + ":" + authentication.getName();
-        return generateAnswerToUserQuestion(news, question, chatId);
+        return newsAiAsyncWorker.answerQuestion(news.getTitle(), news.getDetails(), question, chatId);
     }
 
 

@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.CompletableFuture;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/news")
@@ -22,11 +24,11 @@ public class NewsAiController {
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/{newsId}/ask")
-    public ResponseEntity<AskNewsResponse> askQuestion(@PathVariable Long newsId,
-                                                   @Valid @RequestBody AskNewsRequest askNewsRequest,
-                                                   Authentication authentication) {
-        AskNewsResponse askNewsResponse = newsAiService.getAiGeneratedAnswer(newsId,
-                askNewsRequest.question(), authentication);
-        return ResponseEntity.ok(askNewsResponse);
+    public CompletableFuture<ResponseEntity<AskNewsResponse>> askQuestion(@PathVariable Long newsId,
+                                                                          @Valid @RequestBody AskNewsRequest askNewsRequest,
+                                                                          Authentication authentication) {
+        return newsAiService.getAiGeneratedAnswer(newsId,
+                        askNewsRequest.question(), authentication)
+                .thenApply(ResponseEntity::ok);
     }
 }
