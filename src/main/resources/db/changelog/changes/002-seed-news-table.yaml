@@ -8,13 +8,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: title
-                  value: "Spring Boot News Service Launched"
+                  value: "Northbridge University Opens Community Greenhouse"
               - column:
                   name: details
-                  value: "The news service now supports CRUD operations with pagination."
+                  value: "Northbridge University has opened a rooftop greenhouse where students and local volunteers will grow vegetables throughout the year. The project will support agricultural research, host free gardening workshops, and donate part of each harvest to nearby food banks.."
               - column:
                   name: reported_by
-                  value: "Editor"
+                  value: "reporter1"
               - column:
                   name: reported_at
                   valueDate: "2026-07-13T09:00:00"
@@ -26,10 +26,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: title
-                  value: "Liquibase Migrations Enabled"
+                  value: "Riverton Launches Six-Month Electric Bus Pilot"
               - column:
                   name: details
-                  value: "Database schema and seed data are managed through Liquibase changelogs."
+                  value: "Riverton has introduced twelve electric buses on three of its busiest routes as part of a six-month transport pilot. City officials will measure reliability, passenger feedback, energy use, and operating costs before deciding whether to expand the fleet next year."
               - column:
                   name: reported_by
                   value: "Editor"
