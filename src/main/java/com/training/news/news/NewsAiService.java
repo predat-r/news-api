@@ -2,7 +2,10 @@ package com.training.news.news;
 
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,11 +13,13 @@ public class NewsAiService {
 
     private final ChatClient chatClient;
     private final NewsService newsService;
+    private final MessageChatMemoryAdvisor chatMemoryAdvisor;
 
-
-    public NewsAiService(ChatClient.Builder builder, NewsService newsService) {
+    public NewsAiService(ChatClient.Builder builder, NewsService newsService, ChatMemory chatMemory) {
         this.chatClient = builder.build();
         this.newsService = newsService;
+        this.chatMemoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory)
+                .build();
     }
 
     public NewsSummaryResponse generateSummary(News news) {
@@ -32,8 +37,10 @@ public class NewsAiService {
                 .entity(NewsSummaryResponse.class);
     }
 
-    private AiAnswerResponse generateAnswerToUserQuestion(News news, String question) {
+    private AskNewsResponse generateAnswerToUserQuestion(News news, String question, String chatId) {
         return chatClient.prompt()
+                .advisors(advisor -> advisor.advisors(chatMemoryAdvisor)
+                        .param(ChatMemory.CONVERSATION_ID, chatId))
                 .system("You are a news editor and are ordered to answer the user query using only the provided news article")
                 .user(user -> user.text("""
                                 News title:{title}
@@ -47,9 +54,8 @@ public class NewsAiService {
                         .param("title", news.getTitle())
                         .param("details", news.getDetails())
                         .param("question", question))
-
                 .call()
-                .entity(AiAnswerResponse.class);
+                .entity(AskNewsResponse.class);
     }
 
     @PreAuthorize("""
@@ -67,10 +73,11 @@ public class NewsAiService {
             hasAnyRole('ADMIN', 'EDITOR', 'REPORTER')
             
             """)
-    public AiAnswerResponse getAiGeneratedAnswer(Long newsId, String question) {
+    public AskNewsResponse getAiGeneratedAnswer(Long newsId, String question, Authentication authentication) {
 
         News news = newsService.findNews(newsId);
-        return generateAnswerToUserQuestion(news, question);
+        String chatId = newsId + ":" + authentication.getName();
+        return generateAnswerToUserQuestion(news, question, chatId);
     }
 
 
