@@ -32,6 +32,26 @@ public class NewsAiService {
                 .entity(NewsSummaryResponse.class);
     }
 
+    private AiAnswerResponse generateAnswerToUserQuestion(News news, String question) {
+        return chatClient.prompt()
+                .system("You are a news editor and are ordered to answer the user query using only the provided news article")
+                .user(user -> user.text("""
+                                News title:{title}
+                                
+                                News details:
+                                {details}
+                                
+                                User question:
+                                {question}
+                                """)
+                        .param("title", news.getTitle())
+                        .param("details", news.getDetails())
+                        .param("question", question))
+
+                .call()
+                .entity(AiAnswerResponse.class);
+    }
+
     @PreAuthorize("""
             hasAnyRole('ADMIN', 'EDITOR')
             or (hasRole('REPORTER')
@@ -42,5 +62,16 @@ public class NewsAiService {
         return generateSummary(news);
 
     }
+
+    @PreAuthorize("""
+            hasAnyRole('ADMIN', 'EDITOR', 'REPORTER')
+            
+            """)
+    public AiAnswerResponse getAiGeneratedAnswer(Long newsId, String question) {
+
+        News news = newsService.findNews(newsId);
+        return generateAnswerToUserQuestion(news, question);
+    }
+
 
 }

@@ -54,4 +54,11 @@ public class NewsController {
         NewsSummaryResponse newsSummaryResponse = newsAiService.getAiGeneratedSummary(newsId);
         return ResponseEntity.ok(newsSummaryResponse);
     }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping("/{newsId}/ask")
+    public ResponseEntity<AiAnswerResponse> summary(@PathVariable Long newsId,@RequestBody String question) {
+        AiAnswerResponse aiAnswerResponse = newsAiService.getAiGeneratedAnswer(newsId,question);
+        return ResponseEntity.ok(aiAnswerResponse);
+    }
 }
