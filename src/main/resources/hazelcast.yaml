@@ -2,6 +2,13 @@ hazelcast:
   cluster-name: news-cache
 
   map:
+    aiGeneratedSummary:
+      time-to-live-seconds: 3600
+
+      eviction:
+        eviction-policy: LRU
+        max-size-policy: PER_NODE
+        size: 1000
     newsById:
       time-to-live-seconds: 600
       max-idle-seconds: 300

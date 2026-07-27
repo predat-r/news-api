@@ -63,7 +63,7 @@ public class NewsService {
             and @newsAuthorization.isOwner(#newsId, authentication.name))
             """)
 
-    @CacheEvict(cacheNames = "newsById", key = "#newsId")
+    @CacheEvict(cacheNames = {"newsById","aiGeneratedSummary"}, key = "#newsId")
     public NewsResponse updateNews(Long newsId, NewsRequest request) {
         News existingNews = findNews(newsId);
 
@@ -81,7 +81,8 @@ public class NewsService {
             or (hasRole('REPORTER')
             and @newsAuthorization.isOwner(#newsId, authentication.name))
             """)
-    @CacheEvict(cacheNames = "newsById", key = "#newsId")
+
+    @CacheEvict(cacheNames = {"newsById","aiGeneratedSummary"}, key = "#newsId")
     public void deleteNews(Long newsId) {
         News news = findNews(newsId);
         newsRepository.delete(news);

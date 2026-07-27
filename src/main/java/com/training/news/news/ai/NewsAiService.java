@@ -6,6 +6,7 @@ import com.training.news.news.NewsService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.StructuredOutputValidationAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,8 @@ public class NewsAiService {
             or (hasRole('REPORTER')
             and @newsAuthorization.isOwner(#newsId, authentication.name))
             """)
+
+    @Cacheable(cacheNames = "aiGeneratedSummary", key = "#newsId", sync = true)
     public NewsSummaryResponse getAiGeneratedSummary(Long newsId) {
         News news = newsService.findNews(newsId);
         return generateSummary(news);

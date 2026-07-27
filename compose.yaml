@@ -1,13 +1,4 @@
 services:
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    container_name: jaeger
-    ports:
-      - "16686:16686"
-      - "4317:4317"
-      - "4318:4318"
-    environment:
-      COLLECTOR_OTLP_ENABLED: "true"
   postgres:
     image: pgvector/pgvector:0.8.5-pg18-trixie
     container_name: news-postgres
@@ -24,5 +15,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+  lgtm:
+    image: grafana/otel-lgtm:0.29.2
+    container_name: observability-lgtm
+    ports:
+      - "3000:3000"
+      - "4317:4317"
+      - "4318:4318"
+
 volumes:
   postgres18_data:

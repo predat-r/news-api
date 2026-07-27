@@ -2,6 +2,7 @@ package com.training.news.async;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.support.ContextPropagatingTaskDecorator;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
@@ -14,6 +15,10 @@ public class AsyncConfig {
         threadPoolTaskExecutor.setMaxPoolSize(8);
         threadPoolTaskExecutor.setQueueCapacity(50);
         threadPoolTaskExecutor.setThreadNamePrefix("news-ai");
+
+        threadPoolTaskExecutor.setTaskDecorator(
+                new ContextPropagatingTaskDecorator()
+        );
        return threadPoolTaskExecutor;
     }
 }
