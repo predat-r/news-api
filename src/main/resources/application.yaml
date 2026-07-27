@@ -15,6 +15,14 @@ spring:
           api-key: ${GEMINI_API_KEY}
           chat:
             model: gemini-3.6-flash
+          embedding:
+            text:
+              model: gemini-embedding-2
+              dimensions: 768
+            api-key: ${GEMINI_API_KEY}
+    vectorstore:
+      pgvector:
+        initialize-schema: true
 
 
 
