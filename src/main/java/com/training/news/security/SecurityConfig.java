@@ -36,8 +36,7 @@ public class SecurityConfig {
         http.csrf(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
-                        authorize -> authorize.requestMatchers("/swagger-ui/**", "/swagger-ui.html",
-                                        "/v3/api-docs/**")
+                        authorize -> authorize.requestMatchers("/scalar/**" , "/v3/api-docs/**")
 
                                 .permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/news", "/api/v1/news/**")
