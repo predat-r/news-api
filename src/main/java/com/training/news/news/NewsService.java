@@ -72,7 +72,7 @@ public class NewsService {
         existingNews.setUpdatedAt(LocalDateTime.now());
 
         News updatedNews = newsRepository.save(existingNews);
-
+        newsRagIndexer.indexNews(updatedNews);
         return newsMapper.toResponse(updatedNews);
     }
 
@@ -85,6 +85,7 @@ public class NewsService {
     public void deleteNews(Long newsId) {
         News news = findNews(newsId);
         newsRepository.delete(news);
+        newsRagIndexer.deleteNewsIndex(newsId);
     }
 
     public News findNews(Long newsId) {
