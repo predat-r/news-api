@@ -23,12 +23,11 @@ public class NewsAiController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping("/{newsId}/ask")
-    public CompletableFuture<ResponseEntity<AskNewsResponse>> askQuestion(@PathVariable Long newsId,
-                                                                          @Valid @RequestBody AskNewsRequest askNewsRequest,
-                                                                          Authentication authentication) {
-        return newsAiService.getAiGeneratedAnswer(newsId,
-                        askNewsRequest.question(), authentication)
+    @PostMapping("/ask")
+    public CompletableFuture<ResponseEntity<AskNewsResponse>> askQuestion(
+            @Valid @RequestBody AskNewsRequest askNewsRequest,
+            Authentication authentication) {
+        return newsAiService.getAiGeneratedAnswer(askNewsRequest.question(), authentication)
                 .thenApply(ResponseEntity::ok);
     }
 }
