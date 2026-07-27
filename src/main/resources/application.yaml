@@ -4,10 +4,10 @@ spring:
 
 
   datasource:
-    url: jdbc:h2:mem:newsdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/news}
+    username: ${POSTGRES_USERNAME:news}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   ai:
     google:
@@ -16,9 +16,6 @@ spring:
           chat:
             model: gemini-3.6-flash
 
-  h2:
-    console:
-      enabled: true
 
 
   cache:
@@ -37,6 +34,8 @@ spring:
       hibernate:
         generate_statistics: true
         format_sql: true
+        jdbc:
+          time_zone: UTC
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
