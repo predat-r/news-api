@@ -33,8 +33,9 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
-        <java.version>17</java.version>
+        <java.version>25</java.version>
         <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
+        <hazelcast.version>5.7.0</hazelcast.version>
     </properties>
     <dependencies>
         <dependency>
@@ -66,6 +67,18 @@
             <artifactId>spring-boot-docker-compose</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-vector-store-advisor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-google-genai-embedding</artifactId>
         </dependency>
 
         <dependency>
@@ -139,6 +152,7 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast-spring</artifactId>
+
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

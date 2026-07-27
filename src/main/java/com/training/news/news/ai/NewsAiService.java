@@ -20,7 +20,7 @@ public class NewsAiService {
     private final StructuredOutputValidationAdvisor structuredOutputValidationAdvisor;
     private final NewsAiAsyncWorker newsAiAsyncWorker;
 
-    public NewsAiService(ChatClient.Builder builder ,NewsService newsService, ChatMemory chatMemory,
+    public NewsAiService(ChatClient.Builder builder, NewsService newsService, ChatMemory chatMemory,
 
                          NewsAiAsyncWorker newsAiAsyncWorker) {
         this.chatClient = builder
@@ -64,12 +64,11 @@ public class NewsAiService {
             hasAnyRole('ADMIN', 'EDITOR', 'REPORTER')
             
             """)
-    public CompletableFuture<AskNewsResponse> getAiGeneratedAnswer(Long newsId, String question,
+    public CompletableFuture<AskNewsResponse> getAiGeneratedAnswer(String question,
                                                                    Authentication authentication) {
 
-        News news = newsService.findNews(newsId);
-        String chatId = newsId + ":" + authentication.getName();
-        return newsAiAsyncWorker.answerQuestion(news.getTitle(), news.getDetails(), question, chatId);
+        String chatId = "news-rag:" + authentication.getName();
+        return newsAiAsyncWorker.answerQuestion(question, chatId);
     }
 
 

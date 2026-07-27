@@ -33,10 +33,67 @@ databaseChangeLog:
                   value: "Riverton has introduced twelve fully electric buses on three of its busiest public transport routes as part of a six-month pilot programme. The initiative is intended to reduce fuel consumption, lower air pollution, and improve the reliability of daily services for commuters. Charging stations have been installed at two major bus depots, and drivers have completed specialised training for operating the new vehicles. During the trial, city officials will monitor passenger numbers, maintenance requirements, battery performance, operating costs, and public feedback. If the programme performs successfully, the transport department plans to purchase additional electric buses and gradually replace older diesel vehicles across the city."
               - column:
                   name: reported_by
-                  value: "Editor"
+                  value: "editor"
               - column:
                   name: reported_at
                   valueDate: "2026-07-13T10:00:00"
               - column:
                   name: updated_at
                   valueDate: "2026-07-13T10:00:00"
+
+        - insert:
+            tableName: news
+            columns:
+              - column:
+                  name: title
+                  value: "Northbridge Hospital Activates Solar Microgrid"
+              - column:
+                  name: details
+                  value: "Northbridge General Hospital has activated a solar-powered microgrid designed to keep critical departments operating during electricity outages. The system combines rooftop panels with battery storage and can supply emergency rooms, intensive-care units, laboratories, and essential cooling equipment for up to fourteen hours. Hospital administrators said the project should also reduce annual electricity costs by approximately eighteen percent. Engineers will monitor its performance during a three-month trial before deciding whether to expand the system to two community clinics."
+              - column:
+                  name: reported_by
+                  value: "reporter1"
+              - column:
+                  name: reported_at
+                  valueDate: "2026-07-14T08:30:00"
+              - column:
+                  name: updated_at
+                  valueDate: "2026-07-14T08:30:00"
+
+        - insert:
+            tableName: news
+            columns:
+              - column:
+                  name: title
+                  value: "Lakewood University Tests Low-Cost Water Filters"
+              - column:
+                  name: details
+                  value: "Researchers at Lakewood University have begun a six-month field trial of low-cost household water filters in three rural communities. The filters use locally produced ceramic materials and activated carbon to remove sediment and common bacterial contaminants without requiring electricity. Two hundred households will participate, with researchers collecting water samples every two weeks and interviewing residents about maintenance and usability. The university said final laboratory results will determine whether the design is suitable for wider regional distribution."
+              - column:
+                  name: reported_by
+                  value: "reporter2"
+              - column:
+                  name: reported_at
+                  valueDate: "2026-07-14T11:15:00"
+              - column:
+                  name: updated_at
+                  valueDate: "2026-07-14T11:15:00"
+
+        - insert:
+            tableName: news
+            columns:
+              - column:
+                  name: title
+                  value: "Harbor City Reopens Freight Rail Link After Repairs"
+              - column:
+                  name: details
+                  value: "Harbor City has reopened its eastern freight rail link following eight weeks of repairs to bridges and signalling equipment damaged by severe flooding. The route connects the commercial port with inland warehouses and previously carried nearly forty percent of the city's container traffic. During the closure, most cargo was transported by road, increasing delivery times and congestion near the port. Transport officials expect rail operations to return gradually, with full freight capacity scheduled within two weeks."
+              - column:
+                  name: reported_by
+                  value: "editor"
+              - column:
+                  name: reported_at
+                  valueDate: "2026-07-15T09:45:00"
+              - column:
+                  name: updated_at
+                  valueDate: "2026-07-15T09:45:00"
