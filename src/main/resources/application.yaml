@@ -91,6 +91,7 @@ logging:
     sql: debug
     org.springframework.security: debug
     org.hibernate: debug
+    com.hazelcast.system: warn
 
 
 

@@ -1,6 +1,7 @@
 package com.training.news.news;
 
 import com.training.news.exception.NewsNotFoundException;
+import com.training.news.news.ai.rag.NewsRagIndexer;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -20,26 +21,33 @@ public class NewsService {
 
     private final NewsRepository newsRepository;
     private final NewsMapper newsMapper;
+    private final NewsRagIndexer newsRagIndexer;
 
-    public NewsService(NewsRepository newsRepository, NewsMapper newsMapper) {
+    public NewsService(NewsRepository newsRepository, NewsMapper newsMapper, NewsRagIndexer newsRagIndexer) {
         this.newsRepository = newsRepository;
         this.newsMapper = newsMapper;
+        this.newsRagIndexer = newsRagIndexer;
     }
 
 
     @PreAuthorize("hasAnyRole('ADMIN','EDITOR','REPORTER')")
-    
+
     public NewsResponse createNews(NewsRequest request) {
-        String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
+        String username = Objects.requireNonNull(SecurityContextHolder.getContext()
+                        .getAuthentication())
+                .getName();
         News news = newsMapper.toEntity(request);
         news.setReportedBy(username);
-        return newsMapper.toResponse(newsRepository.save(news));
+        News savedNews = newsRepository.save(news);
+        newsRagIndexer.indexNews(savedNews);
+        return newsMapper.toResponse(savedNews);
     }
 
     @Transactional(readOnly = true)
     public Page<NewsResponse> getNews(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "reportedAt"));
-        return newsRepository.findAll(pageRequest).map(newsMapper::toResponse);
+        return newsRepository.findAll(pageRequest)
+                .map(newsMapper::toResponse);
     }
 
 
@@ -80,6 +88,7 @@ public class NewsService {
     }
 
     public News findNews(Long newsId) {
-        return newsRepository.findById(newsId).orElseThrow(() -> new NewsNotFoundException(newsId));
+        return newsRepository.findById(newsId)
+                .orElseThrow(() -> new NewsNotFoundException(newsId));
     }
 }
