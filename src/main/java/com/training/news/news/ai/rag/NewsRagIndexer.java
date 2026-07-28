@@ -43,7 +43,7 @@ public class NewsRagIndexer {
 
     @Async("aiTaskExecutor")
     public void deleteNewsIndex(Long newsId){
-        vectorStore.delete(getStableId(newsId).toString());
+        vectorStore.delete(List.of(getStableId(newsId).toString()));
     }
 
     private UUID getStableId(Long newsId) {
