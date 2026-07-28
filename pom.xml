@@ -27,8 +27,9 @@
         <url/>
     </scm>
     <properties>
+        <sonar.organization>predat-r</sonar.organization>
         <sonar.projectName>news-api</sonar.projectName>
-        <sonar.projectKey>news-api</sonar.projectKey>
+        <sonar.projectKey>predat-r_news-api</sonar.projectKey>
         <spring-ai.version>2.0.0</spring-ai.version>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/site/jacoco/jacoco.xml
