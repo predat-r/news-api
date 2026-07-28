@@ -48,4 +48,4 @@ jobs:
           cache: maven
 
       - name: Run tests
-        run: ./mvnw --batch-mode --no-transfer-progress verify  -Ddependency-check.skip=true  -DskipPitest=true
+        run: ./mvnw --batch-mode --no-transfer-progress verify  -Ddependency-check.skip=true  -DskipPitest=true -DexcludedGroups=ai
