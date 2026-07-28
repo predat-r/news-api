@@ -29,8 +29,8 @@ jobs:
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
-      GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GTHUB_CLIENT_ID }}
-      GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GTHUB_CLIENT_SECRET }}
+      GITHUB_CLIENT_ID: ${{ secrets.GTHUB_CLIENT_ID }}
+      GITHUB_CLIENT_SECRET: ${{ secrets.GTHUB_CLIENT_SECRET }}
 
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       SONAR_HOST_URL: https://sonarcloud.io
