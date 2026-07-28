@@ -25,12 +25,8 @@ public class NewsRagIndexer {
     public void indexNews(News news) {
         Map<String, Object> metadata = Map.of("newsId", news.getNewsId(), "title", news.getTitle(),
                 "reportedBy", news.getReportedBy(), "documentType", "news");
-        String content = """
-                 Title: %s\s
-                 \s
-                 Details:
-                  %s
-                \s""".formatted(news.getTitle(), news.getDetails());
+        String content = "Title: %s%n%nDetails:%n%s%n"
+                .formatted(news.getTitle(), news.getDetails());
 
         UUID id = getStableId(news.getNewsId());
         Document document = Document.builder()
