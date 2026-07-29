@@ -1,11 +1,13 @@
 spring:
   docker:
     compose:
+      file:
+        - src/test/compose-test.yaml
       skip:
         in-tests: false
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/news_test
+    url: jdbc:postgresql://localhost:5433/news_test
 
 app:
   rag:
