@@ -3,3 +3,10 @@ spring:
     compose:
       skip:
         in-tests: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/news_test
+
+app:
+  rag:
+    import-on-startup: false
