@@ -1,0 +1,197 @@
+[
+  {
+    "source": {
+      "id": "techcrunch",
+      "name": "TechCrunch"
+    },
+    "author": "Sarah Johnson",
+    "title": "Apple Unveils Revolutionary AI-Powered MacBook Pro with M4 Chip",
+    "description": "Apple's latest MacBook Pro features the groundbreaking M4 chip with enhanced AI capabilities, promising 40% better performance and 12-hour battery life.",
+    "url": "https://techcrunch.com/2025/01/15/apple-macbook-pro-m4-ai",
+    "urlToImage": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800",
+    "publishedAt": "2025-01-15T14:30:00.000Z",
+    "details": "Apple today announced its most powerful MacBook Pro yet, featuring the revolutionary M4 chip with dedicated AI processing units. The new laptop promises unprecedented performance for creative professionals and developers, with the ability to handle complex machine learning tasks directly on-device. The M4 chip includes a 16-core Neural Engine that can perform 38 trillion operations per second, making it ideal for AI workloads. Additionally, the new MacBook Pro features an improved Liquid Retina XDR display with ProMotion technology, offering up to 1000 nits of sustained brightness and 1600 nits of peak brightness for HDR details..."
+  },
+  {
+    "source": {
+      "id": "reuters",
+      "name": "Reuters"
+    },
+    "author": "Michael Chen",
+    "title": "Global Markets Rally as Tech Stocks Surge to Record Highs",
+    "description": "Technology stocks led a broad market rally today, with the NASDAQ reaching an all-time high amid strong earnings reports from major tech companies.",
+    "url": "https://reuters.com/markets/tech-stocks-surge-2025-01-15",
+    "urlToImage": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800",
+    "publishedAt": "2025-01-15T16:45:00.000Z",
+    "details": "Wall Street closed at record highs today as technology stocks surged following better-than-expected quarterly earnings from several major companies. The NASDAQ Composite Index gained 2.8%, while the S&P 500 rose 1.9%. Leading the charge were semiconductor companies, with NVIDIA up 5.2% and AMD climbing 4.7%. The rally was fueled by strong revenue growth in AI-related products and services, with analysts predicting continued momentum in the artificial intelligence sector..."
+  },
+  {
+    "source": {
+      "id": "bbc-news",
+      "name": "BBC News"
+    },
+    "author": "Dr. Emily Watson",
+    "title": "Breakthrough Gene Therapy Shows Promise for Treating Alzheimer's Disease",
+    "description": "Scientists report significant progress in a new gene therapy approach that could potentially slow or reverse Alzheimer's disease progression in early trials.",
+    "url": "https://bbc.com/news/health-alzheimers-gene-therapy-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800",
+    "publishedAt": "2025-01-15T10:20:00.000Z",
+    "details": "A groundbreaking gene therapy treatment has shown remarkable results in early clinical trials for Alzheimer's disease patients. The therapy, developed by researchers at Cambridge University, targets the APOE4 gene variant, which significantly increases the risk of developing Alzheimer's. In a Phase II trial involving 120 patients, those receiving the gene therapy showed a 65% slower rate of cognitive decline compared to the placebo group over 18 months. The treatment works by delivering a modified version of the APOE2 gene, which is associated with protection against Alzheimer's..."
+  },
+  {
+    "source": {
+      "id": "espn",
+      "name": "ESPN"
+    },
+    "author": "James Rodriguez",
+    "title": "NBA Finals: Lakers Defeat Celtics in Thrilling Game 7 Showdown",
+    "description": "The Los Angeles Lakers captured their 18th NBA championship after a nail-biting 112-109 victory over the Boston Celtics in Game 7.",
+    "url": "https://espn.com/nba/finals-game7-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800",
+    "publishedAt": "2025-01-14T23:15:00.000Z",
+    "details": "In one of the most thrilling NBA Finals in recent memory, the Los Angeles Lakers defeated the Boston Celtics 112-109 in Game 7 at TD Garden. LeBron James led the Lakers with 35 points, 12 rebounds, and 8 assists in what could be his final Finals appearance. The game was tied 109-109 with 1:47 remaining when Anthony Davis hit a crucial three-pointer to give the Lakers the lead. Jayson Tatum scored 31 points for the Celtics but missed a potential game-tying three-pointer with 12 seconds left. This marks the Lakers' 18th championship, tying them with the Celtics for the most in NBA history..."
+  },
+  {
+    "source": {
+      "id": "nature",
+      "name": "Nature"
+    },
+    "author": "Prof. David Kumar",
+    "title": "Scientists Discover New Species of Deep-Sea Creature in Pacific Ocean",
+    "description": "Marine biologists have identified a previously unknown species of bioluminescent jellyfish living at depths of over 4,000 meters in the Pacific Ocean.",
+    "url": "https://nature.com/articles/pacific-jellyfish-discovery-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
+    "publishedAt": "2025-01-14T12:00:00.000Z",
+    "details": "A team of marine biologists from the University of California has discovered a new species of deep-sea jellyfish with unique bioluminescent properties in the Mariana Trench. The species, tentatively named Chrysaora abyssos, was found at depths between 4,200 and 4,800 meters during a deep-sea expedition using the research vessel Atlantis. What makes this discovery particularly remarkable is the jellyfish's ability to produce blue-green light through a previously unknown biochemical pathway. The creature measures approximately 30 centimeters in diameter and possesses 24 tentacles arranged in a distinctive spiral pattern..."
+  },
+  {
+    "source": {
+      "id": "cnn",
+      "name": "CNN"
+    },
+    "author": "Lisa Martinez",
+    "title": "SpaceX Successfully Launches First Human Mission to Mars",
+    "description": "SpaceX's Starship carrying four astronauts has successfully launched toward Mars in humanity's first crewed mission to the Red Planet.",
+    "url": "https://cnn.com/space/spacex-mars-mission-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=800",
+    "publishedAt": "2025-01-16T09:15:00.000Z",
+    "details": "History was made today as SpaceX's Starship spacecraft launched four astronauts on humanity's first crewed mission to Mars. The crew, consisting of two NASA astronauts, one ESA astronaut, and one SpaceX mission specialist, will spend approximately nine months traveling to Mars. The mission, dubbed 'Red Dawn,' aims to establish a temporary research base and conduct extensive geological surveys. Elon Musk called it 'the most important day in human history since the moon landing.' The crew is expected to spend 18 months on Mars before returning to Earth in late 2027..."
+  },
+  {
+    "source": {
+      "id": "the-guardian",
+      "name": "The Guardian"
+    },
+    "author": "Rebecca Thompson",
+    "title": "Antarctic Ice Sheet Shows Unexpected Signs of Recovery",
+    "description": "New satellite data reveals that parts of the Antarctic ice sheet are thickening for the first time in decades, surprising climate scientists worldwide.",
+    "url": "https://theguardian.com/environment/antarctic-ice-recovery-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800",
+    "publishedAt": "2025-01-16T08:30:00.000Z",
+    "details": "In a surprising turn of events, recent satellite measurements show that certain regions of the Antarctic ice sheet have been thickening over the past two years, marking the first recorded ice growth in the region since monitoring began in the 1970s. The unexpected recovery is attributed to changes in ocean currents and increased snowfall due to altered weather patterns. While scientists caution that this doesn't reverse the overall trend of ice loss, the discovery provides new insights into ice sheet dynamics and could inform future climate models..."
+  },
+  {
+    "source": {
+      "id": "wired",
+      "name": "WIRED"
+    },
+    "author": "Alex Kim",
+    "title": "Quantum Computer Achieves Breakthrough in Drug Discovery",
+    "description": "IBM's latest quantum computer has successfully modeled complex protein folding, potentially revolutionizing pharmaceutical research and development.",
+    "url": "https://wired.com/quantum-drug-discovery-breakthrough-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800",
+    "publishedAt": "2025-01-16T11:45:00.000Z",
+    "details": "IBM's 1000-qubit quantum computer has achieved a major milestone in drug discovery by successfully modeling the folding patterns of complex proteins in real-time. This breakthrough could dramatically accelerate the development of new medications by allowing researchers to understand how drugs interact with target proteins at the molecular level. The quantum simulation completed in hours what would take classical supercomputers months or years to calculate. Pharmaceutical companies are already expressing interest in partnering with IBM to leverage this technology for developing treatments for cancer, Alzheimer's, and rare genetic diseases..."
+  },
+  {
+    "source": {
+      "id": "national-geographic",
+      "name": "National Geographic"
+    },
+    "author": "Dr. Maria Santos",
+    "title": "Lost Mayan City Discovered Using Revolutionary LiDAR Technology",
+    "description": "Archaeologists have uncovered a massive Mayan civilization hidden beneath the jungle canopy in Guatemala using advanced aerial scanning techniques.",
+    "url": "https://nationalgeographic.com/mayan-city-discovery-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6b?w=800",
+    "publishedAt": "2025-01-16T07:20:00.000Z",
+    "details": "A groundbreaking archaeological discovery has revealed a previously unknown Mayan city covering over 2,100 square kilometers in the jungles of northern Guatemala. Using advanced LiDAR technology mounted on aircraft, researchers from the Universidad de San Carlos penetrated the dense jungle canopy to map an extensive network of pyramids, palaces, and agricultural terraces. The city, preliminary named 'Yax Muul,' is believed to have housed over 100,000 inhabitants at its peak between 600-900 CE. Initial excavations have already uncovered elaborate murals and hieroglyphic inscriptions that could reshape our understanding of Mayan civilization..."
+  },
+  {
+    "source": {
+      "id": "financial-times",
+      "name": "Financial Times"
+    },
+    "author": "Robert Chang",
+    "title": "Central Bank Digital Currency Trials Show Promising Results",
+    "description": "The Federal Reserve's digital dollar pilot program has completed successful trials with major banks, paving the way for potential nationwide implementation.",
+    "url": "https://ft.com/digital-dollar-trials-success-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=800",
+    "publishedAt": "2025-01-15T19:30:00.000Z",
+    "details": "The Federal Reserve announced that its six-month pilot program for a central bank digital currency (CBDC) has exceeded expectations, with transaction speeds 50 times faster than traditional banking systems and near-zero processing fees. The trials involved JPMorgan Chase, Bank of America, and Wells Fargo processing over $2 billion in digital transactions. Fed Chairman Jerome Powell stated that the results demonstrate the feasibility of a digital dollar while maintaining the security and stability of the traditional monetary system. A decision on full implementation is expected by the end of 2025..."
+  },
+  {
+    "source": {
+      "id": "scientific-american",
+      "name": "Scientific American"
+    },
+    "author": "Dr. Jennifer Walsh",
+    "title": "CRISPR Gene Editing Eliminates HIV from Living Organism",
+    "description": "Scientists successfully use advanced gene editing to completely remove HIV from infected mice, representing a major step toward a cure.",
+    "url": "https://scientificamerican.com/crispr-hiv-elimination-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800",
+    "publishedAt": "2025-01-15T13:15:00.000Z",
+    "details": "Researchers at Temple University have successfully eliminated HIV from infected laboratory mice using an advanced CRISPR-Cas gene editing system. The breakthrough involved a two-step process: first using long-acting slow-effective release antiviral therapy (LASER ART) to suppress viral replication, then deploying CRISPR-Cas to excise HIV DNA from infected cells. After treatment, no traces of HIV could be detected in 30% of the treated mice even after extensive testing. The research team is now preparing for trials in larger animal models, with human trials potentially beginning within three years..."
+  },
+  {
+    "source": {
+      "id": "reuters",
+      "name": "Reuters"
+    },
+    "author": "Thomas Anderson",
+    "title": "Fusion Energy Reactor Achieves Net Energy Gain for Full Week",
+    "description": "The ITER fusion reactor in France has sustained a net energy gain for seven consecutive days, marking a historic milestone in clean energy development.",
+    "url": "https://reuters.com/energy/fusion-reactor-breakthrough-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
+    "publishedAt": "2025-01-14T20:45:00.000Z",
+    "details": "The International Thermonuclear Experimental Reactor (ITER) in southern France has achieved a historic milestone by maintaining net energy gain for seven consecutive days, producing 1.3 times more energy than was input into the system. This breakthrough represents the longest sustained period of energy-positive fusion reaction ever achieved. The reactor maintained plasma temperatures of 150 million degrees Celsius while producing 11 megawatts of power. Scientists believe this success brings commercial fusion energy significantly closer to reality, potentially providing clean, unlimited energy within the next two decades..."
+  },
+  {
+    "source": {
+      "id": "the-verge",
+      "name": "The Verge"
+    },
+    "author": "Sophie Chen",
+    "title": "Neural Implant Allows Paralyzed Patient to Control Robotic Body",
+    "description": "A revolutionary brain-computer interface has enabled a paralyzed patient to operate a full-body robotic suit using only thoughts.",
+    "url": "https://theverge.com/neural-implant-robotic-body-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=800",
+    "publishedAt": "2025-01-14T16:20:00.000Z",
+    "details": "In a groundbreaking medical achievement, a 34-year-old patient paralyzed from the neck down has successfully controlled a sophisticated robotic exoskeleton using a neural implant. The brain-computer interface, developed by Neuralink in collaboration with Boston Dynamics, translates neural signals into movement commands with 95% accuracy. The patient, who was paralyzed in a motorcycle accident three years ago, can now walk, manipulate objects, and perform complex tasks through the robotic body. The technology represents a major advance in treating spinal cord injuries and could restore mobility to millions of paralyzed individuals worldwide..."
+  },
+  {
+    "source": {
+      "id": "new-york-times",
+      "name": "The New York Times"
+    },
+    "author": "Amanda Foster",
+    "title": "Vertical Farms Revolutionize Food Production in Urban Areas",
+    "description": "Massive vertical farming facilities in major cities are producing 50 times more food per square foot than traditional agriculture while using 95% less water.",
+    "url": "https://nytimes.com/vertical-farms-urban-revolution-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800",
+    "publishedAt": "2025-01-13T14:10:00.000Z",
+    "details": "Towering vertical farms in New York, Tokyo, and Singapore are transforming urban food production, yielding crops year-round while using a fraction of the resources required by traditional farming. These 30-story agricultural facilities use LED lighting systems and hydroponic technology to grow everything from leafy greens to strawberries with 50 times higher productivity per square foot than conventional farms. The controlled environment eliminates the need for pesticides and reduces water usage by 95%. Major grocery chains are already sourcing produce from these facilities, and similar projects are planned for 50 cities worldwide by 2027..."
+  },
+  {
+    "source": {
+      "id": "MIT Technology Review",
+      "name": "MIT Technology Review"
+    },
+    "author": "Dr. Kevin Liu",
+    "title": "AI System Discovers Universal Cancer Treatment Mechanism",
+    "description": "An artificial intelligence system has identified a previously unknown cellular pathway that could lead to universal cancer treatments across all tumor types.",
+    "url": "https://technologyreview.com/ai-universal-cancer-treatment-2025",
+    "urlToImage": "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=800",
+    "publishedAt": "2025-01-13T11:30:00.000Z",
+    "details": "DeepMind's latest AI system, AlphaFold Cancer, has discovered a fundamental cellular mechanism present in all cancer types that could revolutionize treatment approaches. The AI analyzed protein interactions across 10,000 different cancer samples and identified a previously unknown pathway that controls tumor cell survival. When researchers blocked this pathway in laboratory studies, it caused cancer cells to self-destruct while leaving healthy cells unharmed. The discovery could lead to a single drug treatment effective against all forms of cancer, with human trials expected to begin within 18 months pending regulatory approval..."
+  }
+]

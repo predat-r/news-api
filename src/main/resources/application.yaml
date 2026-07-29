@@ -11,15 +11,15 @@ spring:
 
   ai:
     google:
-        genai:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          model: gemini-3.6-flash
+        embedding:
+          text:
+            model: gemini-embedding-2
+            dimensions: 768
           api-key: ${GEMINI_API_KEY}
-          chat:
-            model: gemini-3.6-flash
-          embedding:
-            text:
-              model: gemini-embedding-2
-              dimensions: 768
-            api-key: ${GEMINI_API_KEY}
     vectorstore:
       pgvector:
         initialize-schema: true
@@ -63,7 +63,7 @@ spring:
           github:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
-management:
+
   endpoints:
     web:
       exposure:
@@ -84,5 +84,8 @@ logging:
     com.hazelcast.system: warn
 
 
+app:
+  rag:
+    import-on-startup: false
 
 
