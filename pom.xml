@@ -34,9 +34,11 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <java.version>25</java.version>
         <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
         <hazelcast.version>5.7.0</hazelcast.version>
+        <test.excluded-groups>live-ai</test.excluded-groups>
     </properties>
     <dependencies>
         <dependency>
@@ -212,6 +214,13 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludedGroups>${test.excluded-groups}</excludedGroups>
                 </configuration>
             </plugin>
             <plugin>
@@ -423,6 +432,10 @@
                         <param>com.training.news.*</param>
                     </targetTests>
 
+                    <excludedTestClasses>
+                        <param>com.training.news.news.ai.NewsAiLiveTests</param>
+                    </excludedTestClasses>
+
                     <threads>4</threads>
                     <timestampedReports>false</timestampedReports>
 
@@ -444,5 +457,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>live-ai</id>
+            <properties>
+                <test.excluded-groups>none</test.excluded-groups>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

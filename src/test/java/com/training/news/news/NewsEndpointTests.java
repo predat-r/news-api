@@ -1,5 +1,6 @@
 package com.training.news.news;
 
+import com.training.news.news.ai.rag.NewsRagIndexer;
 import com.training.news.security.api_user.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -30,6 +32,9 @@ class NewsEndpointTests {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private NewsRagIndexer newsRagIndexer;
 
     @Test
     void createNewsReturnsCreatedNews() throws Exception {

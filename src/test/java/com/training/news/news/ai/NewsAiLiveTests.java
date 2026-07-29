@@ -4,16 +4,9 @@ import com.training.news.news.News;
 import com.training.news.news.NewsRepository;
 import com.training.news.security.api_user.Role;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.model.Generation;
-import org.springframework.ai.chat.prompt.ChatOptions;
-import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,26 +14,27 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class NewsAiEndpointTests {
+@Tag("live-ai")
+class NewsAiLiveTests {
 
     private static final String NEWS_API = "/api/v1/news";
 
@@ -50,35 +44,24 @@ class NewsAiEndpointTests {
     @Autowired
     private NewsRepository newsRepository;
 
-    @MockitoBean
+    @Autowired
     private VectorStore vectorStore;
 
-    @MockitoBean
-    private ChatModel chatModel;
-
     private Long savedNewsId;
-
-    @BeforeEach
-    void configureChatModel() {
-        when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
-    }
+    private String indexedDocumentId;
 
     @AfterEach
     void cleanUpFixtures() {
         if (savedNewsId != null) {
             newsRepository.deleteById(savedNewsId);
         }
+        if (indexedDocumentId != null) {
+            vectorStore.delete(List.of(indexedDocumentId));
+        }
     }
 
     @Test
     void summaryReturnsGeneratedSummary() throws Exception {
-        when(chatModel.call(any(Prompt.class))).thenReturn(chatResponse("""
-                {
-                  "summary": "The city opened a public library powered by rooftop solar panels.",
-                  "keywords": ["library", "solar"]
-                }
-                """));
-
         LocalDateTime now = LocalDateTime.now();
         News news = newsRepository.saveAndFlush(News.builder()
                 .title("City opens solar-powered public library")
@@ -103,19 +86,15 @@ class NewsAiEndpointTests {
 
     @Test
     void askReturnsGeneratedAnswer() throws Exception {
-        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(Document.builder()
-                .id("project-aurora")
+        indexedDocumentId = UUID.randomUUID().toString();
+        vectorStore.add(List.of(Document.builder()
+                .id(indexedDocumentId)
                 .text("""
                         Project Aurora status report:
                         The launch status color for Project Aurora is blue.
                         """)
                 .metadata("documentType", "news")
                 .build()));
-        when(chatModel.call(any(Prompt.class))).thenReturn(chatResponse("""
-                {
-                  "answer": "Project Aurora's launch status is blue."
-                }
-                """));
 
         MvcResult result = mockMvc.perform(post(NEWS_API + "/ask")
                         .with(authenticatedAs("reporter1", Role.REPORTER))
@@ -135,13 +114,6 @@ class NewsAiEndpointTests {
                 .andExpect(jsonPath("$.answer").isNotEmpty())
                 .andExpect(jsonPath("$.answer").value(
                         org.hamcrest.Matchers.containsStringIgnoringCase("blue")));
-
-        verify(vectorStore).similaritySearch(any(SearchRequest.class));
-    }
-
-    private ChatResponse chatResponse(String content) {
-        return new ChatResponse(List.of(
-                new Generation(new AssistantMessage(content))));
     }
 
     private RequestPostProcessor authenticatedAs(String username, Role role) {
