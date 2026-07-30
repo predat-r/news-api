@@ -6,7 +6,6 @@ import com.training.news.security.oauth.OAuthJwtAuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,16 +32,15 @@ public class SecurityConfig {
                                             OAuthJwtAuthenticationSuccessHandler oauthJwtAuthenticationSuccessHandler,
                                             JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler) {
 
-        http.csrf(Customizer.withDefaults())
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(
-                        authorize -> authorize.requestMatchers("/scalar/**" , "/v3/api-docs/**")
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/scalar/**", "/v3/api-docs/**")
 
-                                .permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/news", "/api/v1/news/**")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/news", "/api/v1/news/**")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .formLogin(formLogin -> formLogin.successHandler(jwtAuthenticationSuccessHandler))
                 .oauth2ResourceServer(resourceServer -> resourceServer.jwt(
                         jwt -> jwt.jwtAuthenticationConverter(token -> new JwtAuthenticationToken(token,

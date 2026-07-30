@@ -87,5 +87,5 @@ logging:
 app:
   rag:
     import-on-startup: false
-
+    indexing-enabled: true
 

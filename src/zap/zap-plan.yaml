@@ -1,0 +1,56 @@
+---
+env:
+  contexts:
+    - name: "news-api"
+      urls:
+        - "http://localhost:8080"
+
+      includePaths:
+        - "http://localhost:8080/api/.*"
+        - "http://localhost:8080/oauth2/.*"
+
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: true
+    progressToStdout: true
+jobs:
+  - type: "openapi"
+    parameters:
+      apiUrl: "http://localhost:8080/v3/api-docs"
+      targetUrl: "http://localhost:8080"
+      context: "news-api"
+
+  - type: "passiveScan-wait"
+    parameters:
+      maxDuration: 5
+
+  - type: "activeScan-config"
+    parameters:
+      maxRuleDurationInMins: 2
+      maxScanDurationInMins: 20
+      maxAlertsPerRule: 20
+      defaultPolicy: "Default Policy"
+
+    excludePaths:
+      - "http://localhost:8080/api/v1/users/logout(?:/.*|\\?.*)?"
+      - "http://localhost:8080/api/v1/news/ask(?:/.*|\\?.*)?"
+      - "http://localhost:8080/api/v1/news/[^/]+/summary(?:/.*|\\?.*)?"
+
+  - type: "activeScan"
+    parameters:
+      context: "news-api"
+      url: "http://localhost:8080/api"
+      policy: "Default Policy"
+
+  - type: "passiveScan-wait"
+    parameters:
+      maxDuration: 5
+
+  - type: "report"
+    parameters:
+      reportDir: "target"
+      reportFile: "zap-active-report.html"
+      reportTitle: "News API Active Scan"
+      template: "traditional-html-plus"
+      displayReport: false

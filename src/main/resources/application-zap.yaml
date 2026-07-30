@@ -1,0 +1,8 @@
+app:
+  rag:
+    indexing-enabled: false
+
+springdoc:
+  paths-to-exclude:
+    - /api/v1/news/ask
+    - /api/v1/news/*/summary
