@@ -35,6 +35,10 @@
             ${project.build.directory}/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.exclusions>
+            **/NewsApplication.java,
+            **/*StartupRunner.java
+        </sonar.coverage.exclusions>
         <java.version>25</java.version>
         <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
         <hazelcast.version>5.7.0</hazelcast.version>
@@ -353,6 +357,14 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.15</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/NewsApplication.class</exclude>
+                        <exclude>**/config/**</exclude>
+                        <exclude>**/*Config.class</exclude>
+                        <exclude>**/*StartupRunner.class</exclude>
+                    </excludes>
+                </configuration>
 
                 <executions>
                     <execution>
