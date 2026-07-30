@@ -18,10 +18,8 @@ public class NewsRagIndexer {
     private final VectorStore vectorStore;
     private final boolean indexingEnabled;
 
-    public NewsRagIndexer(
-            VectorStore vectorStore,
-            @Value("${app.rag.indexing-enabled:true}") boolean indexingEnabled
-    ) {
+    public NewsRagIndexer(VectorStore vectorStore,
+                          @Value("${app.rag.indexing-enabled:true}") boolean indexingEnabled) {
         this.vectorStore = vectorStore;
         this.indexingEnabled = indexingEnabled;
     }
@@ -32,19 +30,11 @@ public class NewsRagIndexer {
             return;
         }
 
-        Map<String, Object> metadata = Map.of(
-                "newsId", news.getNewsId(),
-                "title", news.getTitle(),
-                "reportedBy", news.getReportedBy(),
-                "documentType", "news"
-        );
+        Map<String, Object> metadata = Map.of("newsId", news.getNewsId(), "title", news.getTitle(),
+                "reportedBy", news.getReportedBy(), "documentType", "news");
 
-        String content = """
-                Title: %s
-
-                Details:
-                %s
-                """.formatted(news.getTitle(), news.getDetails());
+        String content = "Title: %s%n%nDetails:%n%s%n".formatted(news.getTitle(), news.getDetails());
+        
 
         UUID id = getStableId(news.getNewsId());
 
