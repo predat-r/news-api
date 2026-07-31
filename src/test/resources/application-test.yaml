@@ -12,3 +12,8 @@ spring:
 app:
   rag:
     import-on-startup: false
+
+test:
+  auth:
+    username: ${BDD_LOGIN_USERNAME}
+    password: ${BDD_LOGIN_PASSWORD}

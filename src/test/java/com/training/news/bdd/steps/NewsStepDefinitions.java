@@ -1,4 +1,4 @@
-package com.training.news.bdd;
+package com.training.news.bdd.steps;
 
 import com.training.news.news.News;
 import com.training.news.news.NewsMapper;
