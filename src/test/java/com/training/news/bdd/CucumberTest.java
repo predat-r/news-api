@@ -1,5 +1,6 @@
 package com.training.news.bdd;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
 import org.junit.platform.suite.api.SelectClasspathResource;
@@ -19,5 +20,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         key = PLUGIN_PROPERTY_NAME,
         value = "pretty"
 )
+@Tag("bdd")
 public class CucumberTest {
 }
