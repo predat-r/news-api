@@ -34,7 +34,7 @@ public class NewsRagIndexer {
                 "reportedBy", news.getReportedBy(), "documentType", "news");
 
         String content = "Title: %s%n%nDetails:%n%s%n".formatted(news.getTitle(), news.getDetails());
-        
+
 
         UUID id = getStableId(news.getNewsId());
 
